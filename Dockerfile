@@ -12,7 +12,6 @@ RUN http_proxy=${HTTP_PROXY} https_proxy=${HTTPS_PROXY} npm install
 
 ADD . ./
 
-
 ENTRYPOINT ["node"]
 
 CMD ["./index.js"]

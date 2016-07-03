@@ -1,11 +1,14 @@
 FROM mhart/alpine-node:4.4
 
-RUN http_proxy=http://proxy.intra.bt.com:8080 apk add --update git
+ARG HTTP_PROXY=""
+ARG HTTPS_PROXY=""
+
+RUN http_proxy=${HTTP_PROXY} apk add --update git
 
 WORKDIR /src
 
 ADD package.json ./
-RUN http_proxy=http://proxy.intra.bt.com:8080 https_proxy=http://proxy.intra.bt.com:8080 npm install
+RUN http_proxy=${HTTP_PROXY} https_proxy=${HTTPS_PROXY} npm install
 
 ADD . ./
 
@@ -14,4 +17,4 @@ ENTRYPOINT ["node"]
 
 CMD ["./index.js"]
 
-EXPOSE 8080
+EXPOSE 8080 9090

@@ -9,7 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.4.1",
     "dockerode": "git+https://github.com/apocas/dockerode.git",
-    "http-proxy": "^1.14.0"
+    "http-proxy": "^1.14.0",
+    "winston": "^2.2.0"
   }
 }

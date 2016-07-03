@@ -2,11 +2,6 @@
   "name": "swarm-ingress",
   "version": "1.0.0",
   "dependencies": {
-    "bluebird": {
-      "version": "3.4.1",
-      "from": "bluebird@latest",
-      "resolved": "https://registry.npmjs.org/bluebird/-/bluebird-3.4.1.tgz"
-    },
     "dockerode": {
       "version": "2.2.10",
       "from": "git+https://github.com/apocas/dockerode.git",
@@ -89,7 +84,7 @@
     },
     "http-proxy": {
       "version": "1.14.0",
-      "from": "http-proxy@latest",
+      "from": "http-proxy@>=1.14.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/http-proxy/-/http-proxy-1.14.0.tgz",
       "dependencies": {
         "eventemitter3": {
@@ -106,7 +101,7 @@
     },
     "winston": {
       "version": "2.2.0",
-      "from": "winston@latest",
+      "from": "winston@>=2.2.0 <3.0.0",
       "resolved": "https://registry.npmjs.org/winston/-/winston-2.2.0.tgz",
       "dependencies": {
         "async": {

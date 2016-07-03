@@ -1,7 +1,6 @@
 var Docker = require("dockerode");
 var http = require("http");
 var httpProxy = require('http-proxy');
-var Promise = require('bluebird');
 var logger = require("./logger.js");
 
 var proxy = httpProxy.createProxyServer({});

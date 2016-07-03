@@ -1,4 +1,5 @@
 FROM mhart/alpine-node:4.4
+ENV NODE_ENV=production
 
 ARG HTTP_PROXY=""
 ARG HTTPS_PROXY=""

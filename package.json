@@ -1,12 +1,13 @@
 {
   "name": "swarm-ingress",
   "version": "1.0.0",
-  "description": "",
+  "description": "Routes DNS names to Swarm services",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Tom Bowden",
+  "repository": "https://gitub.com/tpbowden/swarm-ingress-router.git",
   "license": "ISC",
   "dependencies": {
     "bluebird": "^3.4.1",

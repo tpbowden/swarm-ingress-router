@@ -2,7 +2,9 @@
   "name": "ingress-router",
   "version": "1.0.0",
   "description": "Routes DNS names to Swarm services",
-  "main": "index.js",
+  "bin": {
+    "ingress-router": "./bin/start"
+  },
   "scripts": {
     "test": "./node_modules/.bin/eslint . --ext .js"
   },

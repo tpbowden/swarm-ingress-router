@@ -1,6 +1,6 @@
 {
   "name": "ingress-router",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Routes DNS names to Swarm services",
   "bin": {
     "ingress-router": "./bin/start"

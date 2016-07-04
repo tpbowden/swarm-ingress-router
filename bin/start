@@ -1,7 +1,16 @@
 #!/usr/bin/env node
-
 var http = require("http");
+var logger = require("../src/logger.js");
 var IngressRouter = require("../src/ingress_router.js");
+
+process.stdin.resume();
+
+var terminate = function() {
+  logger.info("Stop signal received, shutting down...");
+  process.exit(0);
+}
+process.on("SIGINT", terminate);
+process.on("SIGTERM", terminate);
 
 var router = new IngressRouter();
 

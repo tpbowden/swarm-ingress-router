@@ -1,6 +1,6 @@
 var Docker = require("dockerode");
 var http = require("http");
-var httpProxy = require('http-proxy');
+var httpProxy = require("http-proxy");
 var logger = require("./logger.js");
 
 var proxy = httpProxy.createProxyServer({});
@@ -9,16 +9,14 @@ var hosts = {};
 var docker = new Docker();
 
 function getAllServices(docker) {
-  return new Promise(function(resolve, reject) { 
+  return new Promise(function(resolve, reject) {
     docker.listServices(function(err, services) {
-      if(err) {
+      if (err) {
         reject(err);
+      } else if (services) {
+        resolve(services);
       } else {
-        if(services) {
-          resolve(services);
-        } else {
-          reject("No services");
-        }
+        reject("No services");
       }
     });
   });
@@ -26,23 +24,23 @@ function getAllServices(docker) {
 
 function filterIngressServices(services) {
   return services.filter(function(service) {
-    return service.Spec.Labels && service.Spec.Labels.ingress == "true";
+    return service.Spec.Labels && service.Spec.Labels.ingress === "true";
   });
 }
 
 function registerEndpoint(service) {
   service.Endpoint.Ports.forEach(function(endpoint) {
-    if(service.Spec.Labels && service.Spec.Labels.dnsname && (service.Spec.Labels.serviceport == endpoint.TargetPort)) {
+    if (service.Spec.Labels && service.Spec.Labels.dnsname &&
+      (service.Spec.Labels.serviceport === endpoint.TargetPort)) {
       logger.info("Registering service " + service.Spec.Name);
-      hosts[service.Spec.Labels.dnsname] =  {
-        "DNSName": service.Spec.Labels.dnsname,
-        "ServiceName": service.Spec.Name,
-        "TargetPort": endpoint.TargetPort,
+      hosts[service.Spec.Labels.dnsname] = {
+        DNSName: service.Spec.Labels.dnsname,
+        ServiceName: service.Spec.Name,
+        TargetPort: endpoint.TargetPort
       };
     }
   });
 }
-
 
 function loadServices() {
   logger.info("Starting service sync");
@@ -59,24 +57,26 @@ loadServices();
 
 setInterval(loadServices, 10000);
 
-
 http.createServer(function(req, res) {
   logger.info("Processing request");
-  hostname = req.headers.host.split(":")[0];
+  var hostname = req.headers.host.split(":")[0];
   logger.info("Received request for " + hostname);
-  if(hosts[hostname]) {
+  if (hosts[hostname]) {
     logger.info("Proxying to http://" + hosts[hostname].ServiceName + ":" + hosts[hostname].TargetPort);
-    proxy.web(req, res, {target: "http://" + hosts[hostname].ServiceName + ":" + hosts[hostname].TargetPort}, function(e) {
-      logger.error("Failed to proxy to " + hosts[hostname].ServiceName + ": " + e);
-      res.writeHead(503);
-      res.end("Service not available");
-    });
+    proxy.web(
+      req, res, {
+        target: "http://" + hosts[hostname].ServiceName + ":" + hosts[hostname].TargetPort
+      }, function(e) {
+        logger.error("Failed to proxy to " +
+          hosts[hostname].ServiceName + ": " + e);
+        res.writeHead(503);
+        res.end("Service not available");
+      });
   } else {
     logger.warn("Failed to find service for " + hostname);
     res.writeHead(404);
     res.end("Service not found");
   }
-
 }).listen(8080);
 
 http.createServer(function(req, res) {

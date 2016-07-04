@@ -1,0 +1,6 @@
+#!/usr/bin/env node
+
+var IngressRouter = require("../src/ingress_router.js");
+
+router = new IngressRouter();
+router.start();

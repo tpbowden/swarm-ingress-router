@@ -4,17 +4,21 @@
   "description": "Routes DNS names to Swarm services",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/eslint . --ext .js"
   },
   "author": "Tom Bowden",
   "repository": {
     "type": "git",
     "url": "https://gitub.com/tpbowden/swarm-ingress-router.git"
   },
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "dockerode": "git+https://github.com/apocas/dockerode.git",
     "http-proxy": "^1.14.0",
     "winston": "^2.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^3.0.0",
+    "eslint-config-google": "^0.6.0"
   }
 }

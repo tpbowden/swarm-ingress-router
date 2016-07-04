@@ -1,5 +1,5 @@
 {
-  "name": "swarm-ingress",
+  "name": "ingress-router",
   "version": "1.0.0",
   "description": "Routes DNS names to Swarm services",
   "main": "index.js",

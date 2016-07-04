@@ -12,7 +12,7 @@ Then you have to start the router on this network. It also needs to be able to c
 
     docker service create --name router -p 80:8080 \
       --mount target=/var/run/docker.sock,source=/var/run/docker.sock,type=bind \
-      tpbowden/ingress-router:latest
+      --network frontends tpbowden/ingress-router:latest
 
 Now you can start your frontend services and they will be available on all of your Swarm nodes:
 

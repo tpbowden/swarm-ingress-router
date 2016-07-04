@@ -20,13 +20,13 @@ module.exports = class ServiceLoader {
     return this.docker.listServices().then(function(services) {
       var hosts = {};
       self.filterIngressServices(services).forEach(function(service) {
-        if (service.Spec.Labels && service.Spec.Labels.dnsname &&
-          service.Spec.Labels.serviceport) {
+        if (service.Spec.Labels && service.Spec.Labels["ingress.dnsname"] &&
+          service.Spec.Labels["ingress.serviceport"]) {
           logger.info("Registering service " + service.Spec.Name + " as " +
             service.Spec.Labels.dnsname);
-          hosts[service.Spec.Labels.dnsname] = {
+          hosts[service.Spec.Labels["ingress.dnsname"]] = {
             ServiceName: service.Spec.Name,
-            TargetPort: service.Spec.Labels.serviceport
+            TargetPort: service.Spec.Labels["ingress.serviceport"]
           };
         }
       });

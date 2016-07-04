@@ -21,7 +21,6 @@ module.exports = class ServiceLoader {
         }
       });
     });
-
   }
 
   filterIngressServices(services) {
@@ -38,7 +37,8 @@ module.exports = class ServiceLoader {
       self.filterIngressServices(services).forEach(function(service) {
         if (service.Spec.Labels && service.Spec.Labels.dnsname &&
           service.Spec.Labels.serviceport) {
-          logger.info("Registering service " + service.Spec.Name + " as " + service.Spec.Labels.dnsname);
+          logger.info("Registering service " + service.Spec.Name + " as " +
+            service.Spec.Labels.dnsname);
           hosts[service.Spec.Labels.dnsname] = {
             ServiceName: service.Spec.Name,
             TargetPort: service.Spec.Labels.serviceport
@@ -50,6 +50,5 @@ module.exports = class ServiceLoader {
       logger.error("Failed to retrieve any services: " + err);
       return {};
     });
-
   }
 };

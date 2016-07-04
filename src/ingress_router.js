@@ -14,7 +14,7 @@ module.exports = class IngressRouter {
   handleRequest(req, res) {
     var hostname = req.headers.host.split(":")[0];
     var host = this.hosts[hostname];
-    if(!host){
+    if (!host) {
       logger.warn("Failed to find service for " + hostname);
       res.writeHead(404);
       res.end("Service not found");
@@ -22,7 +22,6 @@ module.exports = class IngressRouter {
     }
 
     var serviceAddress = "http://" + host.ServiceName + ":" + host.TargetPort;
-
     logger.info("Proxying to " + serviceAddress);
     this.proxy.web(req, res, {
       target: serviceAddress

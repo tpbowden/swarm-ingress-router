@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 
+var http = require("http");
 var IngressRouter = require("../src/ingress_router.js");
 
-router = new IngressRouter();
-router.start();
+var router = new IngressRouter();
+
+router.loadServices();
+setInterval(router.loadServices.bind(router), 10000);
+
+http.createServer(router.handleRequest.bind(router)).listen(8080);
+
+http.createServer(router.handleMetrics.bind(router)).listen(9090);

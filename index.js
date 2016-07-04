@@ -1,4 +1,3 @@
-var Docker = require("dockerode");
 var http = require("http");
 var httpProxy = require("http-proxy");
 var logger = require("./logger.js");

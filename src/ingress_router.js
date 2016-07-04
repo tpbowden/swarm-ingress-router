@@ -33,8 +33,7 @@ module.exports = class IngressRouter {
   }
 
   handleMetrics(req, res) {
-    res.writeHead(200);
-    console.log(req);
+    res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(this.hosts));
   }
 

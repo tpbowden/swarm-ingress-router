@@ -32,9 +32,10 @@ module.exports = class ServiceLoader {
 
   call() {
     logger.info("Starting service sync");
+    var self = this;
     return this.getAllServices().then(function(services) {
       var hosts = {};
-      this.filterIngressServices(services).forEach(function(service) {
+      self.filterIngressServices(services).forEach(function(service) {
         if (service.Spec.Labels && service.Spec.Labels.dnsname &&
           service.Spec.Labels.serviceport) {
           logger.info("Registering service " + service.Spec.Name + " as " + service.Spec.Labels.dnsname);

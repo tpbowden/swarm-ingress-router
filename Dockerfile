@@ -13,8 +13,8 @@ RUN http_proxy=${HTTP_PROXY} https_proxy=${HTTPS_PROXY} npm install
 
 ADD . ./
 
-ENTRYPOINT ["node"]
+ENTRYPOINT ["/usr/bin/node"]
 
-CMD ["./index.js"]
+CMD ["./bin/start"]
 
 EXPOSE 8080 9090

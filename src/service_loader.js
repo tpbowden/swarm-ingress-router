@@ -21,12 +21,12 @@ module.exports = class ServiceLoader {
       var hosts = {};
       self.filterIngressServices(services).forEach(function(service) {
         if (service.Spec.Labels && service.Spec.Labels["ingress.dnsname"] &&
-          service.Spec.Labels["ingress.serviceport"]) {
+          service.Spec.Labels["ingress.targetport"]) {
           logger.info("Registering service " + service.Spec.Name + " as " +
             service.Spec.Labels.dnsname);
           hosts[service.Spec.Labels["ingress.dnsname"]] = {
             ServiceName: service.Spec.Name,
-            TargetPort: service.Spec.Labels["ingress.serviceport"]
+            TargetPort: service.Spec.Labels["ingress.targetport"]
           };
         }
       });

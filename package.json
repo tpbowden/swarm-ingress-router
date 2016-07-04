@@ -15,7 +15,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "dockerode": "git+https://github.com/apocas/dockerode.git",
     "http-proxy": "^1.14.0",
     "winston": "^2.2.0"
   },

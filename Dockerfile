@@ -4,8 +4,6 @@ ENV NODE_ENV=production
 ARG HTTP_PROXY=""
 ARG HTTPS_PROXY=""
 
-RUN http_proxy=${HTTP_PROXY} apk add --update git
-
 WORKDIR /src
 
 ADD package.json ./

@@ -1,26 +1,11 @@
 "use strict";
 
-var Docker = require("dockerode");
+var DockerClient = require("./docker_client.js");
 var logger = require("./logger.js");
 
 module.exports = class ServiceLoader {
   constructor() {
-    this.docker = new Docker();
-  }
-
-  getAllServices() {
-    var self = this;
-    return new Promise(function(resolve, reject) {
-      self.docker.listServices(function(err, services) {
-        if (err) {
-          reject(err);
-        } else if (services) {
-          resolve(services);
-        } else {
-          reject("No services");
-        }
-      });
-    });
+    this.docker = new DockerClient();
   }
 
   filterIngressServices(services) {
@@ -32,7 +17,7 @@ module.exports = class ServiceLoader {
   call() {
     logger.info("Starting service sync");
     var self = this;
-    return this.getAllServices().then(function(services) {
+    return this.docker.listServices().then(function(services) {
       var hosts = {};
       self.filterIngressServices(services).forEach(function(service) {
         if (service.Spec.Labels && service.Spec.Labels.dnsname &&
@@ -47,7 +32,7 @@ module.exports = class ServiceLoader {
       });
       return hosts;
     }).catch(function(err) {
-      logger.error("Failed to retrieve any services: " + err);
+      logger.error("Failed to build routing table: " + err);
       return {};
     });
   }

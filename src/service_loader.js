@@ -23,7 +23,7 @@ module.exports = class ServiceLoader {
         if (service.Spec.Labels && service.Spec.Labels["ingress.dnsname"] &&
           service.Spec.Labels["ingress.targetport"]) {
           logger.info("Registering service " + service.Spec.Name + " as " +
-            service.Spec.Labels.dnsname);
+            service.Spec.Labels["ingress.dnsname"]);
           hosts[service.Spec.Labels["ingress.dnsname"]] = {
             ServiceName: service.Spec.Name,
             TargetPort: service.Spec.Labels["ingress.targetport"]

@@ -1,5 +1,0 @@
-package router
-
-import (
-  "testing"
-)

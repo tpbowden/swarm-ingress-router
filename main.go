@@ -8,8 +8,8 @@ import (
   "net/url"
   "net/http"
   "net/http/httputil"
-  "github.com/tpbowden/ingress-router/router"
-  "github.com/tpbowden/ingress-router/service"
+  "github.com/tpbowden/swarm-ingress-router/router"
+  "github.com/tpbowden/swarm-ingress-router/service"
 )
 
 var r *router.Router

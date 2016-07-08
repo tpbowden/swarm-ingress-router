@@ -2,7 +2,7 @@ package router
 
 import (
   "log"
-  "github.com/tpbowden/ingress-router/service"
+  "github.com/tpbowden/swarm-ingress-router/service"
 )
 
 type Router struct {

@@ -11,13 +11,13 @@ script:
   - go test `go list ./... | grep -v '/vendor/'`
 after_success:
   - if [ "$TRAVIS_TAG" ]; then
-    GOOS=linux GOARCH=amd64 go build;
+    GOOS=linux GOARCH=amd64 go build .;
     docker build -t tpbowden/ingress-router:"$TRAVIS_TAG" .;
     docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
     docker push tpbowden/ingress-router:"$TRAVIS_TAG";
     fi
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
-    GOOS=linux GOARCH=amd64 go build;
+    GOOS=linux GOARCH=amd64 go build .;
     docker build -t tpbowden/ingress-router:latest .;
     docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
     docker push tpbowden/ingress-router:latest;

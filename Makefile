@@ -2,6 +2,8 @@ GOOS=linux
 GOARCH=amd64
 TAG?=latest
 
+all: install-deps test
+
 install-deps:
 	@glide install
 
@@ -15,3 +17,6 @@ build-image: compile
 
 release: build-image
 	@docker push tpbowden/ingress-router:$(TAG)
+
+test:
+	@go test `go list ./... | grep -v '/vendor/'`

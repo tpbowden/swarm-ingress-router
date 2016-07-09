@@ -10,15 +10,10 @@ install:
 script:
   - go test `go list ./... | grep -v '/vendor/'`
 after_success:
+  - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
   - if [ "$TRAVIS_TAG" ]; then
-    GOOS=linux GOARCH=amd64 go build .;
-    docker build -t tpbowden/ingress-router:"$TRAVIS_TAG" .;
-    docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-    docker push tpbowden/ingress-router:"$TRAVIS_TAG";
+    TAG="$TRAVIS_TAG" make release
     fi
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
-    GOOS=linux GOARCH=amd64 go build .;
-    docker build -t tpbowden/ingress-router:latest .;
-    docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-    docker push tpbowden/ingress-router:latest;
+    make release
     fi

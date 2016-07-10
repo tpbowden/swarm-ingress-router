@@ -12,8 +12,8 @@ script:
 after_success:
   - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
   - if [ "$TRAVIS_TAG" ]; then
-    TAG="$TRAVIS_TAG" make release
+    TAG="$TRAVIS_TAG" make release;
     fi
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
-    make release
+    make release;
     fi

@@ -27,8 +27,15 @@ func NewService(name string, port int, dnsName string) Service {
 func LoadAll() []Service {
   defaultHeaders := map[string]string{"User-Agent": "engine-api-cli-1.0"}
   cli, err := client.NewClient("unix:///var/run/docker.sock", "v1.24", nil, defaultHeaders)
+	defer func() {
+			if r := recover(); r != nil {
+				log.Print("Failed to lookup services: ", r)
+			}
+	}()
+
   if err != nil {
-    panic(err)
+		log.Print("Failed to lookup services: ", err)
+    return make([]Service, 0)
   }
 
   filter := filters.NewArgs()

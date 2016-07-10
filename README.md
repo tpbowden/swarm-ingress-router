@@ -36,3 +36,10 @@ In order for the router to pick up a service, the service must have the followin
 * `ingress.targetport=<your service's externally-facing port>`
 
 You do not need to publish this port externally as long as your services are both on a shared network.
+
+## Todo
+
+* Allow services to listen for HTTPS and decrypt using certificates stored elsewhere (probably Vault)
+* Better logging
+* Command line arguments for log level, bind address etc
+* Use Docker events to sync and long polling as a fallback

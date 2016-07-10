@@ -1,5 +1,5 @@
-hash: 5c325bda4eb1351063c49a06c3f67127721ca917411e3ee46c34a61c38af6591
-updated: 2016-07-08T21:33:38.027934237+01:00
+hash: a931585239d3494411f2200864fc9f51705703039dffdf84b37c123de5b30727
+updated: 2016-07-10T17:18:50.944069686+01:00
 imports:
 - name: github.com/docker/distribution
   version: 4e17ab5d319ac5b70b2769442947567a83386fbc
@@ -41,6 +41,8 @@ imports:
   version: 55eb11d21d2a31a3cc93838241d04800f52e823d
   subpackages:
   - formatters/logstash
+- name: github.com/urfave/cli
+  version: 1efa31f08b9333f1bd4882d61f9d668a70cd902e
 - name: golang.org/x/net
   version: 4876518f9e71663000c348837735820161a42df7
   subpackages:

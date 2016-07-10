@@ -5,7 +5,7 @@ Route DNS names to labelled Swarm services using Docker 1.12's internal service 
 * No external load balancer or config files needed making for easy deployments
 * Automatic service discovery and load balancing handled by Docker
 * Scaled and maintained by the Swarm for high resilience and performance
-* Incredibly lightweight image (less than 15MB image after decompression)
+* Incredibly lightweight image (less than 20MB after decompression)
 
 ## Installation
 

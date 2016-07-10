@@ -12,7 +12,14 @@ compile: install-deps
 	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -a -v .
 	@echo "Done"
 
-build-image: compile
+release-compile:
+	@docker build -t ingress-router-build -f Dockerfile.build .
+	@docker run --name ingress-router-build -it ingress-router-build make compile
+	@docker cp ingress-router-build:/go/src/github.com/tpbowden/swarm-ingress-router/swarm-ingress-router .
+	@docker rm ingress-router-build
+	@docker rmi ingress-router-build
+
+build-image: release-compile
 	@docker build -t tpbowden/ingress-router:$(TAG) .
 
 release: build-image

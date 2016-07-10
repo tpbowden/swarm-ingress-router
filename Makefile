@@ -20,10 +20,10 @@ release-compile:
 	@docker rmi ingress-router-build
 
 build-image: release-compile
-	@docker build -t tpbowden/ingress-router:$(TAG) .
+	@docker build -t tpbowden/swarm-ingress-router:$(TAG) .
 
 release: build-image
-	@docker push tpbowden/ingress-router:$(TAG)
+	@docker push tpbowden/swarm-ingress-router:$(TAG)
 
 test:
 	@go test `go list ./... | grep -v '/vendor/'`

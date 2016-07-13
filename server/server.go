@@ -14,6 +14,7 @@ import (
 
 type Server struct {
   bindAddress string
+  pollInterval time.Duration
   router *router.Router
 }
 
@@ -48,7 +49,7 @@ func (s *Server) handler(w http.ResponseWriter, req *http.Request) {
 func (s *Server) startTicker() {
   go s.updateServices()
 
-  ticker := time.NewTicker(10 * time.Second)
+  ticker := time.NewTicker(s.pollInterval * time.Second)
   quit := make(chan struct{})
   go func() {
     for {
@@ -71,7 +72,7 @@ func (s *Server) Start() {
   http.ListenAndServe(fmt.Sprintf("%s:8080", s.bindAddress), nil)
 }
 
-func NewServer(bind string) *Server {
+func NewServer(bind string, pollInterval int) *Server {
   router := router.NewRouter()
-  return &Server{bindAddress: bind, router: router}
+  return &Server{bindAddress: bind, router: router, pollInterval: time.Duration(pollInterval)}
 }

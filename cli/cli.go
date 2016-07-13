@@ -7,8 +7,6 @@ import (
   "github.com/tpbowden/swarm-ingress-router/server"
 )
 
-
-
 func main() {
   app := cli.NewApp()
 
@@ -18,13 +16,18 @@ func main() {
       Value: "127.0.0.1",
       Usage: "Bind to `address`",
     },
+    cli.IntFlag{
+      Name: "interval, i",
+      Value: 10,
+      Usage: "Poll interval in `seconds`",
+    },
   }
   app.Name = "Swarm Ingress Router"
   app.Usage = "Route DNS names to Swarm services based on labels"
   app.Version = version.Version
 
   app.Action = func(c *cli.Context) error {
-    server := server.NewServer(c.String("bind"))
+    server := server.NewServer(c.String("bind"), c.Int("interval"))
     server.Start()
     return nil
   }

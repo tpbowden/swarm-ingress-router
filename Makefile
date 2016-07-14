@@ -27,6 +27,3 @@ release: build-image
 
 test:
 	@go test -cover `go list ./... | grep -v '/vendor/'`
-
-lint:
-	@golint `go list ./... | grep -v '/vendor/'`

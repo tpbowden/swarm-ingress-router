@@ -5,7 +5,7 @@ import (
 )
 
 func TestServiceURL(t *testing.T) {
-  s := Service{Name: "foo", Port: 8080, DnsName: "bar"}
+  s := NewService("foo", 8080, "bar")
   url := s.Url()
   expected := "http://foo:8080"
 

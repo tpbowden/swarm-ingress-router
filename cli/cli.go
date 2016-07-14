@@ -7,11 +7,6 @@ import (
 	"os"
 )
 
-type args struct {
-	bind     string
-	interval int
-}
-
 func main() {
 	start(os.Args, server.NewServer)
 }

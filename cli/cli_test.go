@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"fmt"
@@ -36,7 +36,7 @@ func TestStartingTheServerWithCLI(t *testing.T) {
 	args[2] = "1.2.3.4"
 	args[3] = "-i"
 	args[4] = "100"
-	start(args, newTestServer)
+	Start(args, newTestServer)
 
 	expectedAddr := "1.2.3.4"
 	actualAddr := fakeServer.bindAddress

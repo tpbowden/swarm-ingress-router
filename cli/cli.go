@@ -1,19 +1,13 @@
-package main
+package cli
 
 import (
-	"os"
-
 	"github.com/urfave/cli"
 
 	"github.com/tpbowden/swarm-ingress-router/server"
 	"github.com/tpbowden/swarm-ingress-router/version"
 )
 
-func main() {
-	start(os.Args, server.NewServer)
-}
-
-func start(args []string, serverInit func(string, int) server.Startable) {
+func Start(args []string, serverInit func(string, int) server.Startable) {
 	app := cli.NewApp()
 
 	app.Flags = []cli.Flag{

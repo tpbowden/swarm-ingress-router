@@ -10,6 +10,18 @@ func TestServiceURL(t *testing.T) {
   expected := "http://foo:8080"
 
   if url != expected {
-    t.Error("Expected", expected, "got", url)
+    t.Errorf("Expected %s, got %s", expected, url)
   }
 }
+
+func TestServiceDNSNAme(t *testing.T) {
+  s := Service{dnsName: "something"}
+
+  expected := "something"
+  actual := s.DnsName()
+
+  if expected != actual {
+    t.Errorf("Expected %s, got %s", expected, actual)
+  }
+}
+

@@ -12,6 +12,10 @@ import (
   "github.com/tpbowden/swarm-ingress-router/service"
 )
 
+type Startable interface {
+	Start()
+}
+
 type Server struct {
   bindAddress string
   pollInterval time.Duration
@@ -64,7 +68,7 @@ func (s *Server) startTicker() {
   }()
 }
 
-func (s *Server) Start() {
+func (s Server) Start() {
   s.startTicker()
   http.HandleFunc("/", s.handler)
   bind := fmt.Sprintf("%s:8080", s.bindAddress)
@@ -72,7 +76,7 @@ func (s *Server) Start() {
   http.ListenAndServe(fmt.Sprintf("%s:8080", s.bindAddress), nil)
 }
 
-func NewServer(bind string, pollInterval int) Server {
+func NewServer(bind string, pollInterval int) Startable {
   router := router.NewRouter()
-  return Server{bindAddress: bind, router: router, pollInterval: time.Duration(pollInterval)}
+  return Startable(Server{bindAddress: bind, router: router, pollInterval: time.Duration(pollInterval)})
 }

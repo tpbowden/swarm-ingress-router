@@ -7,7 +7,16 @@ import (
   "github.com/tpbowden/swarm-ingress-router/server"
 )
 
+type args struct {
+	bind string
+	interval int
+}
+
 func main() {
+	start(os.Args, server.NewServer)
+}
+
+func start(args []string, serverInit func(string, int) (server.Startable)) {
   app := cli.NewApp()
 
   app.Flags = []cli.Flag {
@@ -24,15 +33,15 @@ func main() {
   }
   app.Name = "Swarm Ingress Router"
   app.Usage = "Route DNS names to Swarm services based on labels"
-  app.Version = version.Version
+  app.Version = version.Version.String()
 
   app.Action = func(c *cli.Context) error {
-    server := server.NewServer(c.String("bind"), c.Int("interval"))
+    server := serverInit(c.String("bind"), c.Int("interval"))
     server.Start()
     return nil
   }
 
-  app.Run(os.Args)
+  app.Run(args)
 }
 
 

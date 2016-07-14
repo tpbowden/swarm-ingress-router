@@ -20,7 +20,12 @@ func TestAddingARoute(t *testing.T) {
   services := make([]Routable, 1)
   services[0] = service
   r.UpdateTable(services)
-  routedService, _ := r.Route("www.example.com")
+  routedService, ok := r.Route("www.example.com")
+
+  if !ok {
+    t.Fatal("Failed to lookup route")
+  }
+
   actual := routedService.Url()
   expected := "http://route.local"
 

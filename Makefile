@@ -9,7 +9,7 @@ install-deps:
 
 compile: install-deps
 	@echo "Building binary"
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o swarm-ingress-router -a -v ./cli/cli.go
+	@GOOS=$(GOOS) GOARCH=$(GOARCH) go build -a -v .
 	@echo "Done"
 
 release-compile:

@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/tpbowden/swarm-ingress-router/server"
 	"testing"
+
+	"github.com/tpbowden/swarm-ingress-router/server"
 )
 
 var (

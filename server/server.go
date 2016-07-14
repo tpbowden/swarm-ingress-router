@@ -2,14 +2,15 @@ package server
 
 import (
 	"fmt"
-	"github.com/tpbowden/swarm-ingress-router/router"
-	"github.com/tpbowden/swarm-ingress-router/service"
 	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/tpbowden/swarm-ingress-router/router"
+	"github.com/tpbowden/swarm-ingress-router/service"
 )
 
 type Startable interface {

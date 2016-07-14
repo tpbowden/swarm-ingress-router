@@ -1,13 +1,15 @@
 package service
 
 import (
+	"log"
+	"strconv"
+
 	"github.com/docker/engine-api/client"
 	"github.com/docker/engine-api/types"
 	"github.com/docker/engine-api/types/filters"
-	"github.com/tpbowden/swarm-ingress-router/router"
 	"golang.org/x/net/context"
-	"log"
-	"strconv"
+
+	"github.com/tpbowden/swarm-ingress-router/router"
 )
 
 func LoadAll() []router.Routable {

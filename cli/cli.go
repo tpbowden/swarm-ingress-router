@@ -1,10 +1,12 @@
 package main
 
 import (
+	"os"
+
+	"github.com/urfave/cli"
+
 	"github.com/tpbowden/swarm-ingress-router/server"
 	"github.com/tpbowden/swarm-ingress-router/version"
-	"github.com/urfave/cli"
-	"os"
 )
 
 func main() {

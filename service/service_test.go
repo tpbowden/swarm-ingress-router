@@ -6,7 +6,7 @@ import (
 
 func TestServiceURL(t *testing.T) {
 	s := NewService("foo", 8080, "bar")
-	url := s.Url()
+	url := s.URL()
 	expected := "http://foo:8080"
 
 	if url != expected {
@@ -18,7 +18,7 @@ func TestServiceDNSNAme(t *testing.T) {
 	s := Service{dnsName: "something"}
 
 	expected := "something"
-	actual := s.DnsName()
+	actual := s.DNSName()
 
 	if expected != actual {
 		t.Errorf("Expected %s, got %s", expected, actual)

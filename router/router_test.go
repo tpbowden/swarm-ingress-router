@@ -6,11 +6,11 @@ import (
 
 type TestService struct{}
 
-func (t TestService) DnsName() string {
+func (t TestService) DNSName() string {
 	return "www.example.com"
 }
 
-func (t TestService) Url() string {
+func (t TestService) URL() string {
 	return "http://route.local"
 }
 
@@ -26,7 +26,7 @@ func TestAddingARoute(t *testing.T) {
 		t.Fatal("Failed to lookup route")
 	}
 
-	actual := routedService.Url()
+	actual := routedService.URL()
 	expected := "http://route.local"
 
 	if expected != actual {

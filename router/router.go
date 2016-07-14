@@ -16,8 +16,8 @@ func (r *Router) Route(address string) (Routable, bool) {
 func (r *Router) UpdateTable(services []Routable) {
 	newTable := make(map[string]Routable)
 	for _, s := range services {
-		log.Printf("Registering service for %s", s.DnsName())
-		newTable[s.DnsName()] = s
+		log.Printf("Registering service for %s", s.DNSName())
+		newTable[s.DNSName()] = s
 	}
 
 	r.routes = newTable

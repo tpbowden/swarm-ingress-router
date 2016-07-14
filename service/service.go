@@ -10,11 +10,11 @@ type Service struct {
 	dnsName string
 }
 
-func (s Service) DnsName() string {
+func (s Service) DNSName() string {
 	return s.dnsName
 }
 
-func (s Service) Url() string {
+func (s Service) URL() string {
 	return fmt.Sprintf("http://%s:%d", s.name, s.port)
 }
 

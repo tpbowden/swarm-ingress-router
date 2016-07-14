@@ -35,12 +35,12 @@ func (s *Server) handler(w http.ResponseWriter, req *http.Request) {
 	srv, ok := s.router.Route(dnsName)
 
 	if ok {
-		url, err := url.Parse(srv.Url())
+		url, err := url.Parse(srv.URL())
 		if err != nil {
 			fmt.Fprint(w, "Failed to route to service")
 			log.Print("Failed to route to service")
 		} else {
-			log.Printf("Routing to %s", srv.Url())
+			log.Printf("Routing to %s", srv.URL())
 			proxy := httputil.NewSingleHostReverseProxy(url)
 			proxy.ServeHTTP(w, req)
 		}

@@ -30,7 +30,7 @@ func (c Client) GetServices() []swarm.Service {
 
 	if err != nil {
 		log.Print("Failed to lookup services: ", err)
-		return make([]swarm.Service, 0)
+		return []swarm.Service{}
 	}
 
 	filter := filters.NewArgs()
@@ -39,7 +39,8 @@ func (c Client) GetServices() []swarm.Service {
 
 	services, err := cli.ServiceList(context.Background(), types.ServiceListOptions{Filter: filter})
 	if err != nil {
-		panic(err)
+		log.Print("Failed to lookup services: ", err)
+		return []swarm.Service{}
 	}
 
 	return services

@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tpbowden/swarm-ingress-router/docker"
 	"github.com/tpbowden/swarm-ingress-router/router"
 	"github.com/tpbowden/swarm-ingress-router/service"
 )
@@ -25,7 +26,8 @@ type Server struct {
 
 func (s *Server) updateServices() {
 	log.Print("Updating routes")
-	services := service.LoadAll()
+	client := docker.NewClient()
+	services := service.LoadAll(client)
 	s.router.UpdateTable(services)
 }
 

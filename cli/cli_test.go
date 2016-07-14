@@ -27,18 +27,11 @@ func newTestServer(bind string, interval int) server.Startable {
 }
 
 func TestStartingTheServerWithCLI(t *testing.T) {
-	args := make([]string, 5)
-
-	args[0] = "cli"
-	args[1] = "-b"
-	args[2] = "1.2.3.4"
-	args[3] = "-i"
-	args[4] = "100"
+	args := []string{"cli", "-b", "1.2.3.4", "-i", "100"}
 	Start(args, newTestServer)
 
 	expectedAddr := "1.2.3.4"
 	actualAddr := fakeServer.bindAddress
-
 	if expectedAddr != actualAddr {
 		t.Errorf("Expected bind address to equal %s, got %s", expectedAddr, actualAddr)
 	}

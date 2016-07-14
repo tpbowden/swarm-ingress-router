@@ -15,7 +15,7 @@ import (
 type Server struct {
   bindAddress string
   pollInterval time.Duration
-  router *router.Router
+  router router.Router
 }
 
 func (s *Server) updateServices() {
@@ -72,7 +72,7 @@ func (s *Server) Start() {
   http.ListenAndServe(fmt.Sprintf("%s:8080", s.bindAddress), nil)
 }
 
-func NewServer(bind string, pollInterval int) *Server {
+func NewServer(bind string, pollInterval int) Server {
   router := router.NewRouter()
-  return &Server{bindAddress: bind, router: router, pollInterval: time.Duration(pollInterval)}
+  return Server{bindAddress: bind, router: router, pollInterval: time.Duration(pollInterval)}
 }

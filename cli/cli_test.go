@@ -47,7 +47,7 @@ func TestStartingTheServerWithCLI(t *testing.T) {
 	expectedInterval := 100
 	actualInterval := fakeServer.interval
 	if expectedInterval != actualInterval {
-		t.Errorf("Expected interval to equal %s, got %s", expectedInterval, actualInterval)
+		t.Errorf("Expected interval to equal %d, got %d", expectedInterval, actualInterval)
 	}
 
 	if !serverStarted {

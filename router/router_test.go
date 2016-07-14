@@ -30,6 +30,6 @@ func TestAddingARoute(t *testing.T) {
 	expected := "http://route.local"
 
 	if expected != actual {
-		t.Error("Expected service URL to equal %s, got %s", expected, actual)
+		t.Errorf("Expected service URL to equal %s, got %s", expected, actual)
 	}
 }

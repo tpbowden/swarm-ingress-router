@@ -26,4 +26,4 @@ release: build-image
 	@docker push tpbowden/swarm-ingress-router:$(TAG)
 
 test:
-	@go test `go list ./... | grep -v '/vendor/'`
+	@go test -cover `go list ./... | grep -v '/vendor/'`

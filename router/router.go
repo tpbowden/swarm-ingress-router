@@ -2,23 +2,22 @@ package router
 
 import (
   "log"
-  "github.com/tpbowden/swarm-ingress-router/service"
 )
 
 type Router struct {
-  routes map[string]service.Service
+  routes map[string]Routable
 }
 
-func (r *Router) Route(address string) (service.Service, bool) {
+func (r *Router) Route(address string) (Routable, bool) {
   route, ok := r.routes[address]
   return route, ok
 }
 
-func (r *Router) UpdateTable(services []service.Service) {
-  newTable := make(map[string]service.Service)
+func (r *Router) UpdateTable(services []Routable) {
+  newTable := make(map[string]Routable)
   for _, s := range services {
-    log.Printf("Registering service for %s", s.DnsName)
-    newTable[s.DnsName] = s
+    log.Printf("Registering service for %s", s.DnsName())
+    newTable[s.DnsName()] = s
   }
 
   r.routes = newTable

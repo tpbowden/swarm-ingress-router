@@ -1,7 +1,6 @@
 package router
 
 type Routable interface {
-  DnsName() string
-  Url() string
+	DnsName() string
+	Url() string
 }
-

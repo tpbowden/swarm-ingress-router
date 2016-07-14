@@ -16,8 +16,6 @@ func (v *VersionNumber) String() string {
 	return fmt.Sprintf("%d.%d.%d", v.major, v.minor, v.patch)
 }
 
-
 func NewVersionNumber(major int, minor int, patch int) VersionNumber {
 	return VersionNumber{major: major, minor: minor, patch: patch}
 }
-

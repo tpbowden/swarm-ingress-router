@@ -2,21 +2,19 @@ package main
 
 import (
 	"fmt"
-	"testing"
 	"github.com/tpbowden/swarm-ingress-router/server"
+	"testing"
 )
 
-
 var (
-	fakeServer TestServer
-	serverStarted bool = false
+	fakeServer    TestServer
+	serverStarted = false
 )
 
 type TestServer struct {
 	bindAddress string
-	interval int
+	interval    int
 }
-
 
 func (t TestServer) Start() {
 	fmt.Println("Starting the server")
@@ -52,10 +50,7 @@ func TestStartingTheServerWithCLI(t *testing.T) {
 		t.Errorf("Expected interval to equal %s, got %s", expectedInterval, actualInterval)
 	}
 
-
 	if !serverStarted {
 		t.Errorf("Expected the server to be started, but it was not")
 	}
 }
-
-

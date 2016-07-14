@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/tpbowden/swarm-ingress-router/server"
@@ -18,7 +17,6 @@ type TestServer struct {
 }
 
 func (t TestServer) Start() {
-	fmt.Println("Starting the server")
 	serverStarted = true
 }
 

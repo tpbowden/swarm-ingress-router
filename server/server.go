@@ -1,7 +1,7 @@
 package server
 
 import (
-  "crypto/tls"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"log"
@@ -74,11 +74,11 @@ func (s *Server) startTicker() {
 
 func (s *Server) getCertificate(clientHello *tls.ClientHelloInfo) (*tls.Certificate, error) {
 	log.Printf("Looking up certificate for %s", clientHello.ServerName)
-  srv, ok := s.router.Route(clientHello.ServerName)
-  if !ok {
-    log.Printf("Failed to look up service for %s", clientHello.ServerName)
+	srv, ok := s.router.Route(clientHello.ServerName)
+	if !ok {
+		log.Printf("Failed to look up service for %s", clientHello.ServerName)
 		return &tls.Certificate{}, errors.New("No service for host found")
-  }
+	}
 
 	tlsService, ok := srv.(service.TLSService)
 
@@ -97,10 +97,10 @@ func (s *Server) Start() {
 	log.Printf("Server listening on tcp://%s", bind)
 	go http.ListenAndServe(fmt.Sprintf("%s:8080", s.bindAddress), s)
 
-  config := &tls.Config{GetCertificate: s.getCertificate}
-  listener, _ := tls.Listen("tcp", tlsBind, config)
-  tlsServer := http.Server{Addr: tlsBind, Handler: s}
-  tlsServer.Serve(listener)
+	config := &tls.Config{GetCertificate: s.getCertificate}
+	listener, _ := tls.Listen("tcp", tlsBind, config)
+	tlsServer := http.Server{Addr: tlsBind, Handler: s}
+	tlsServer.Serve(listener)
 }
 
 func NewServer(bind string, pollInterval int) Startable {

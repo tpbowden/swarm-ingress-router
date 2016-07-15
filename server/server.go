@@ -94,12 +94,15 @@ func (s *Server) Start() {
 	s.startTicker()
 	bind := fmt.Sprintf("%s:8080", s.bindAddress)
 	tlsBind := fmt.Sprintf("%s:8443", s.bindAddress)
-	log.Printf("Server listening on tcp://%s", bind)
-	go http.ListenAndServe(fmt.Sprintf("%s:8080", s.bindAddress), s)
+
+	log.Printf("Server listening for http on http://%s", bind)
+	go http.ListenAndServe(bind, s)
 
 	config := &tls.Config{GetCertificate: s.getCertificate}
 	listener, _ := tls.Listen("tcp", tlsBind, config)
 	tlsServer := http.Server{Addr: tlsBind, Handler: s}
+
+	log.Printf("Server listening for https on https://%s", tlsBind)
 	tlsServer.Serve(listener)
 }
 

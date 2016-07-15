@@ -5,7 +5,7 @@ import (
 )
 
 func TestVersionNumbers(t *testing.T) {
-	version := NewVersionNumber(1, 2, 3)
+	version := newVersionNumber(1, 2, 3)
 	expected := "1.2.3"
 	actual := version.String()
 

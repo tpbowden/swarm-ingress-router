@@ -1,6 +1,8 @@
 package server
 
 import (
+  "crypto/tls"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -27,11 +29,11 @@ type Server struct {
 func (s *Server) updateServices() {
 	log.Print("Updating routes")
 	client := docker.NewClient()
-	services, _ := service.LoadAll(client)
+	services := service.LoadAll(client)
 	s.router.UpdateTable(services)
 }
 
-func (s *Server) handler(w http.ResponseWriter, req *http.Request) {
+func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	log.Printf("Starting request for %s", req.Host)
 	dnsName := strings.Split(req.Host, ":")[0]
 
@@ -70,15 +72,38 @@ func (s *Server) startTicker() {
 	}()
 }
 
-func (s Server) Start() {
+func (s *Server) getCertificate(clientHello *tls.ClientHelloInfo) (*tls.Certificate, error) {
+	log.Printf("Looking up certificate for %s", clientHello.ServerName)
+  srv, ok := s.router.Route(clientHello.ServerName)
+  if !ok {
+    log.Printf("Failed to look up service for %s", clientHello.ServerName)
+		return &tls.Certificate{}, errors.New("No service for host found")
+  }
+
+	tlsService, ok := srv.(service.TLSService)
+
+	if !ok {
+		return &tls.Certificate{}, errors.New("No TLS service found")
+	}
+
+	return tlsService.Certificate(), nil
+
+}
+
+func (s *Server) Start() {
 	s.startTicker()
-	http.HandleFunc("/", s.handler)
 	bind := fmt.Sprintf("%s:8080", s.bindAddress)
+	tlsBind := fmt.Sprintf("%s:8443", s.bindAddress)
 	log.Printf("Server listening on tcp://%s", bind)
-	http.ListenAndServe(fmt.Sprintf("%s:8080", s.bindAddress), nil)
+	go http.ListenAndServe(fmt.Sprintf("%s:8080", s.bindAddress), s)
+
+  config := &tls.Config{GetCertificate: s.getCertificate}
+  listener, _ := tls.Listen("tcp", tlsBind, config)
+  tlsServer := http.Server{Addr: tlsBind, Handler: s}
+  tlsServer.Serve(listener)
 }
 
 func NewServer(bind string, pollInterval int) Startable {
 	router := router.NewRouter()
-	return Startable(Server{bindAddress: bind, router: router, pollInterval: time.Duration(pollInterval)})
+	return Startable(&Server{bindAddress: bind, router: router, pollInterval: time.Duration(pollInterval)})
 }

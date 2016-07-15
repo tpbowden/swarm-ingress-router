@@ -22,7 +22,8 @@ Then you have to start the router on this network. It also needs to be able to c
 Now you can start your frontend services and they will be available on all of your Swarm nodes:
 
     docker service create --name frontend --label ingress=true --label ingress.dnsname=example.local \
-      --label ingress.targetport=80 --network frontends nginx:stable-alpine
+      --label ingress.targetport=80 --network frontends --label ingress.tls=true \
+			--label ingress.cert="$(cat fixtures/cert.crt)" --label ingress.key="$(cat fixtures/key.key)" nginx:stable-alpine
 
 If you now add a DNS record for `example.local` pointing to your Docker node you will be routed to the service.
 The service must be restricted to run only on master nodes (as it has to query for services).

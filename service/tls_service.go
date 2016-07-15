@@ -13,6 +13,10 @@ type TLSService struct {
   forceTLS bool
 }
 
+func (s TLSService) Certificate() *tls.Certificate {
+  return &s.certificate
+}
+
 func (s TLSService) DNSName() string {
   return s.dnsName
 }

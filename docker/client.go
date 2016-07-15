@@ -11,7 +11,7 @@ import (
 )
 
 type ServicePuller interface {
-	GetServices() []swarm.Service
+	GetServices(map[string]string) []swarm.Service
 }
 
 type Client struct {
@@ -19,7 +19,7 @@ type Client struct {
 	apiVersion string
 }
 
-func (c Client) GetServices() []swarm.Service {
+func (c Client) GetServices(filterList map[string]string) []swarm.Service {
 	defaultHeaders := map[string]string{"User-Agent": "engine-api-cli-1.0"}
 	cli, err := client.NewClient("unix:///var/run/docker.sock", "v1.24", nil, defaultHeaders)
 	defer func() {
@@ -35,7 +35,9 @@ func (c Client) GetServices() []swarm.Service {
 
 	filter := filters.NewArgs()
 
-	filter.Add("label", "ingress=true")
+  for k, v := range filterList {
+    filter.Add(k, v)
+  }
 
 	services, err := cli.ServiceList(context.Background(), types.ServiceListOptions{Filter: filter})
 	if err != nil {

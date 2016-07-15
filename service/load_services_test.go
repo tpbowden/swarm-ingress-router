@@ -11,7 +11,7 @@ type FakeClient struct {
 	port    string
 }
 
-func (f FakeClient) GetServices() []swarm.Service {
+func (f FakeClient) GetServices(filters map[string]string) []swarm.Service {
 	labels := make(map[string]string)
 	labels["ingress.targetport"] = f.port
 	labels["ingress.dnsname"] = f.dnsName
@@ -23,7 +23,14 @@ func (f FakeClient) GetServices() []swarm.Service {
 		},
 	}
 
-	return []swarm.Service{fakeService}
+  ignoredService := swarm.Service{
+    ID: "567",
+    Spec: swarm.ServiceSpec{
+      Annotations: swarm.Annotations{Name: "ignored", Labels: map[string]string{}},
+    },
+  }
+
+	return []swarm.Service{ignoredService, fakeService}
 }
 
 func TestLoadingServices(t *testing.T) {

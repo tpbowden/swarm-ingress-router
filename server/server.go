@@ -36,21 +36,20 @@ func (s *Server) handler(w http.ResponseWriter, req *http.Request) {
 	dnsName := strings.Split(req.Host, ":")[0]
 
 	srv, ok := s.router.Route(dnsName)
-
-	if ok {
-		url, err := url.Parse(srv.URL())
-		if err != nil {
-			fmt.Fprint(w, "Failed to route to service")
-			log.Print("Failed to route to service")
-		} else {
-			log.Printf("Routing to %s", srv.URL())
-			proxy := httputil.NewSingleHostReverseProxy(url)
-			proxy.ServeHTTP(w, req)
-		}
-	} else {
-		fmt.Fprint(w, "Failed to route to service")
-		log.Print("Failed to route to service")
+	if !ok {
+		fmt.Fprintf(w, "Failed to route to service")
+		return
 	}
+
+	url, err := url.Parse(srv.URL())
+	if err != nil {
+		fmt.Fprintf(w, "Failed to parse service URL")
+		return
+	}
+
+	log.Printf("Routing to %s", srv.URL())
+	proxy := httputil.NewSingleHostReverseProxy(url)
+	proxy.ServeHTTP(w, req)
 }
 
 func (s *Server) startTicker() {

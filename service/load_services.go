@@ -21,14 +21,32 @@ func parseServices(services []swarm.Service) []router.Routable {
 	var serviceList []router.Routable
 
 	for _, s := range services {
+		var parsedService router.Routable
+
 		port, err := strconv.Atoi(s.Spec.Annotations.Labels["ingress.targetport"])
 		if err != nil {
 			log.Printf("Invalid port detected for service %s", s.Spec.Annotations.Name)
 			continue
 		}
 
-		parsedService := NewService(s.Spec.Annotations.Name, port, s.Spec.Annotations.Labels["ingress.dnsname"])
-		serviceList = append(serviceList, router.Routable(parsedService))
+		if s.Spec.Annotations.Labels["ingress.tls"] == "true" {
+			parsedService = router.Routable(NewTLSService(
+				s.Spec.Annotations.Name,
+				port,
+				s.Spec.Annotations.Labels["ingress.dnsname"],
+				s.Spec.Annotations.Labels["ingress.cert"],
+				s.Spec.Annotations.Labels["ingress.key"],
+			))
+		} else {
+			parsedService = router.Routable(NewService(
+				s.Spec.Annotations.Name,
+				port,
+				s.Spec.Annotations.Labels["ingress.dnsname"],
+			))
+		}
+
+		serviceList = append(serviceList, parsedService)
+
 	}
 
 	return serviceList

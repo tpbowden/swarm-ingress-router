@@ -34,7 +34,7 @@ func (f FakeClient) GetServices(filters map[string]string) []swarm.Service {
 }
 
 func TestLoadingServices(t *testing.T) {
-	result := LoadAll(FakeClient{port: "100", dnsName: "foo.bar.baz"})
+	result, _ := LoadAll(FakeClient{port: "100", dnsName: "foo.bar.baz"})
 
 	parsedService := result[0]
 
@@ -54,7 +54,7 @@ func TestLoadingServices(t *testing.T) {
 }
 
 func TestLoadingInvalidService(t *testing.T) {
-	result := LoadAll(FakeClient{dnsName: "foo.bar.baz", port: "abc"})
+	result, _ := LoadAll(FakeClient{dnsName: "foo.bar.baz", port: "abc"})
 	if len(result) != 0 {
 		t.Errorf("Expected no services to be created")
 	}

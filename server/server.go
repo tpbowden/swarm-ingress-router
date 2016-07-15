@@ -27,7 +27,7 @@ type Server struct {
 func (s *Server) updateServices() {
 	log.Print("Updating routes")
 	client := docker.NewClient()
-	services := service.LoadAll(client)
+	services, _ := service.LoadAll(client)
 	s.router.UpdateTable(services)
 }
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-var Version VersionNumber = NewVersionNumber(0, 0, 6)
+var Version VersionNumber = NewVersionNumber(0, 0, 7)
 
 type VersionNumber struct {
 	major int

@@ -1,7 +1,7 @@
 package service
 
 import (
-  "fmt"
+	"fmt"
 	"testing"
 
 	"github.com/docker/engine-api/types/swarm"
@@ -36,7 +36,6 @@ zxkL4jmqp1YtSBUrbPXlsWPiV1CLU0DUopDq9bebXT4q7lETek5IWAO467hV4S2v
 82ypi+3PZhgFh9hzE0nPcxkPCxtX2E8pwzCfhbpvtdlZNIjQge0S
 -----END RSA PRIVATE KEY-----
 `
-
 
 var certificate = `
 -----BEGIN CERTIFICATE-----
@@ -75,21 +74,18 @@ type FakeClient struct {
 }
 
 func (f FakeClient) GetServices(filters map[string]string) []swarm.Service {
-  labels := map[string]string{
-    "ingress.targetport": f.port,
-    "ingress.dnsname": f.dnsName,
-  }
+	labels := map[string]string{
+		"ingress.targetport": f.port,
+		"ingress.dnsname":    f.dnsName,
+	}
 
-
-
-  tlsLabels := map[string]string{
-    "ingress.targetport": "8443",
-    "ingress.dnsname": "example.local",
-    "ingress.tls": "true",
-    "ingress.cert": certificate,
-    "ingress.key": key,
-  }
-
+	tlsLabels := map[string]string{
+		"ingress.targetport": "8443",
+		"ingress.dnsname":    "example.local",
+		"ingress.tls":        "true",
+		"ingress.cert":       certificate,
+		"ingress.key":        key,
+	}
 
 	fakeService := swarm.Service{
 		ID: "123",
@@ -105,15 +101,15 @@ func (f FakeClient) GetServices(filters map[string]string) []swarm.Service {
 		},
 	}
 
-  fmt.Printf(certificate)
-  fmt.Printf(key)
+	fmt.Printf(certificate)
+	fmt.Printf(key)
 
-  tlsService := swarm.Service{
-    ID: "654",
-    Spec: swarm.ServiceSpec{
-      Annotations: swarm.Annotations{Name: "tlsservice", Labels: tlsLabels},
-    },
-  }
+	tlsService := swarm.Service{
+		ID: "654",
+		Spec: swarm.ServiceSpec{
+			Annotations: swarm.Annotations{Name: "tlsservice", Labels: tlsLabels},
+		},
+	}
 
 	return []swarm.Service{ignoredService, fakeService, tlsService}
 }

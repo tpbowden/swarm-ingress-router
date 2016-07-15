@@ -35,9 +35,9 @@ func (c Client) GetServices(filterList map[string]string) []swarm.Service {
 
 	filter := filters.NewArgs()
 
-  for k, v := range filterList {
-    filter.Add(k, v)
-  }
+	for k, v := range filterList {
+		filter.Add(k, v)
+	}
 
 	services, err := cli.ServiceList(context.Background(), types.ServiceListOptions{Filter: filter})
 	if err != nil {

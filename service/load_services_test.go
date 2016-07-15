@@ -23,12 +23,12 @@ func (f FakeClient) GetServices(filters map[string]string) []swarm.Service {
 		},
 	}
 
-  ignoredService := swarm.Service{
-    ID: "567",
-    Spec: swarm.ServiceSpec{
-      Annotations: swarm.Annotations{Name: "ignored", Labels: map[string]string{}},
-    },
-  }
+	ignoredService := swarm.Service{
+		ID: "567",
+		Spec: swarm.ServiceSpec{
+			Annotations: swarm.Annotations{Name: "ignored", Labels: map[string]string{}},
+		},
+	}
 
 	return []swarm.Service{ignoredService, fakeService}
 }

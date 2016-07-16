@@ -6,9 +6,10 @@ import (
 )
 
 type Service struct {
-	name    string
-	port    int
-	dnsName string
+	name     string
+	port     int
+	dnsName  string
+	forceTLS bool
 }
 
 func (s Service) Certificate() (*tls.Certificate, bool) {
@@ -21,6 +22,10 @@ func (s Service) DNSName() string {
 
 func (s Service) URL() string {
 	return fmt.Sprintf("http://%s:%d", s.name, s.port)
+}
+
+func (s Service) ForceTLS() bool {
+	return s.forceTLS
 }
 
 func NewService(name string, port int, dnsName string) Service {

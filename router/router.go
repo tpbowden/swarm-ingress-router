@@ -2,7 +2,10 @@ package router
 
 import (
 	"crypto/tls"
+	"fmt"
 	"log"
+	"net/http"
+	"net/http/httputil"
 	"net/url"
 )
 
@@ -10,21 +13,27 @@ type Router struct {
 	routes map[string]Routable
 }
 
-func (r *Router) RouteToService(address string) (*url.URL, bool) {
+func (r *Router) RouteToService(address string, secure bool) (http.Handler, bool) {
 	route, ok := r.routes[address]
 	if !ok {
 		log.Printf("Failed to lookup service for %s", address)
-		return &url.URL{}, false
+		return nil, false
 	}
 
 	serviceURL, err := url.Parse(route.URL())
 
 	if err != nil {
 		log.Printf("Failed to parse URL for service %s", address)
-		return &url.URL{}, false
+		return nil, false
 	}
 
-	return serviceURL, true
+	if secure || !route.ForceTLS() {
+		return http.Handler(httputil.NewSingleHostReverseProxy(serviceURL)), true
+	}
+
+	redirectAddress := fmt.Sprintf("https://%s", address)
+	return NewRedirectHandler(redirectAddress, 301), true
+
 }
 
 func (r *Router) CertificateForService(address string) (*tls.Certificate, bool) {

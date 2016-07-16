@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/http/httputil"
 	"strings"
 	"time"
 
@@ -34,14 +33,16 @@ func (s *Server) updateServices() {
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	dnsName := strings.Split(req.Host, ":")[0]
-	url, ok := s.router.RouteToService(dnsName)
+
+	secure := req.TLS != nil
+
+	handler, ok := s.router.RouteToService(dnsName, secure)
 
 	if !ok {
 		fmt.Fprintf(w, "Failed to look up service")
 		return
 	}
-	proxy := httputil.NewSingleHostReverseProxy(url)
-	proxy.ServeHTTP(w, req)
+	handler.ServeHTTP(w, req)
 }
 
 func (s *Server) startTicker() {

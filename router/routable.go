@@ -8,4 +8,5 @@ type Routable interface {
 	DNSName() string
 	URL() string
 	Certificate() (*tls.Certificate, bool)
+	ForceTLS() bool
 }

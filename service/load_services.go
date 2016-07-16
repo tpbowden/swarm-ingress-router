@@ -32,6 +32,7 @@ func parseServices(services []swarm.Service) []router.Routable {
 		}
 
 		if s.Spec.Annotations.Labels["ingress.tls"] == "true" {
+			forceTLS := s.Spec.Annotations.Labels["ingress.forcetls"] == "true"
 			parsedCert, err := extractCertificate(s.Spec.Annotations.Labels)
 			if err != nil {
 				continue
@@ -41,6 +42,7 @@ func parseServices(services []swarm.Service) []router.Routable {
 				port,
 				s.Spec.Annotations.Labels["ingress.dnsname"],
 				parsedCert,
+				forceTLS,
 			))
 		} else {
 			parsedService = router.Routable(NewService(

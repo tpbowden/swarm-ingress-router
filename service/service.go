@@ -1,6 +1,7 @@
 package service
 
 import (
+	"crypto/tls"
 	"fmt"
 )
 
@@ -8,6 +9,10 @@ type Service struct {
 	name    string
 	port    int
 	dnsName string
+}
+
+func (s Service) Certificate() (*tls.Certificate, bool) {
+	return &tls.Certificate{}, false
 }
 
 func (s Service) DNSName() string {

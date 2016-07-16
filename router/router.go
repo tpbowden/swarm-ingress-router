@@ -1,16 +1,40 @@
 package router
 
 import (
+	"crypto/tls"
 	"log"
+	"net/url"
 )
 
 type Router struct {
 	routes map[string]Routable
 }
 
-func (r *Router) Route(address string) (Routable, bool) {
+func (r *Router) RouteToService(address string) (*url.URL, bool) {
 	route, ok := r.routes[address]
-	return route, ok
+	if !ok {
+		log.Printf("Failed to lookup service for %s", address)
+		return &url.URL{}, false
+	}
+
+	serviceURL, err := url.Parse(route.URL())
+
+	if err != nil {
+		log.Printf("Failed to parse URL for service %s", address)
+		return &url.URL{}, false
+	}
+
+	return serviceURL, true
+}
+
+func (r *Router) CertificateForService(address string) (*tls.Certificate, bool) {
+	route, ok := r.routes[address]
+	if !ok {
+		log.Printf("Failed to lookup service for %s", address)
+		return &tls.Certificate{}, false
+	}
+
+	return route.Certificate()
 }
 
 func (r *Router) UpdateTable(services []Routable) {
@@ -23,6 +47,6 @@ func (r *Router) UpdateTable(services []Routable) {
 	r.routes = newTable
 }
 
-func NewRouter() Router {
-	return Router{}
+func NewRouter() *Router {
+	return &Router{}
 }

@@ -3,6 +3,7 @@
 Route DNS names to labelled Swarm services using Docker 1.12's internal service load balancing
 
 * No external load balancer or config files needed making for easy deployments
+* Integrated TLS decryption for services which provide a certificate and key
 * Automatic service discovery and load balancing handled by Docker
 * Scaled and maintained by the Swarm for high resilience and performance
 * Incredibly lightweight image (less than 20MB after decompression)
@@ -35,6 +36,12 @@ In order for the router to pick up a service, the service must have the followin
 * `ingress=true`
 * `ingress.dnsname=<your service's external DNS name>`
 * `ingress.targetport=<your service's externally-facing port>`
+
+For TLS you also need the following
+
+* `ingress.tls=true`
+* `ingress.cert="$(cat <your crt file>)"`
+* `ingress.key="$(cat <your key file>"`
 
 You do not need to publish this port externally as long as your services are both on a shared network.
 

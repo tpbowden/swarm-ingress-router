@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/docker/engine-api/types/swarm"
@@ -69,22 +68,17 @@ sKi+bSEUZYKb
 -----END CERTIFICATE-----`
 
 type FakeClient struct {
-	dnsName string
-	port    string
+  services []swarm.Service
 }
 
 func (f FakeClient) GetServices(filters map[string]string) []swarm.Service {
-	labels := map[string]string{
-		"ingress.targetport": f.port,
-		"ingress.dnsname":    f.dnsName,
-	}
+  return f.services
+}
 
-	tlsLabels := map[string]string{
-		"ingress.targetport": "8443",
-		"ingress.dnsname":    "example.local",
-		"ingress.tls":        "true",
-		"ingress.cert":       certificate,
-		"ingress.key":        key,
+func TestLoadingServices(t *testing.T) {
+	labels := map[string]string{
+		"ingress.targetport": "8080",
+		"ingress.dnsname":    "example.com",
 	}
 
 	fakeService := swarm.Service{
@@ -94,49 +88,124 @@ func (f FakeClient) GetServices(filters map[string]string) []swarm.Service {
 		},
 	}
 
-	ignoredService := swarm.Service{
-		ID: "567",
-		Spec: swarm.ServiceSpec{
-			Annotations: swarm.Annotations{Name: "ignored", Labels: map[string]string{}},
-		},
-	}
-
-	fmt.Printf(certificate)
-	fmt.Printf(key)
-
-	tlsService := swarm.Service{
-		ID: "654",
-		Spec: swarm.ServiceSpec{
-			Annotations: swarm.Annotations{Name: "tlsservice", Labels: tlsLabels},
-		},
-	}
-
-	return []swarm.Service{ignoredService, fakeService, tlsService}
-}
-
-func TestLoadingServices(t *testing.T) {
-	result, _ := LoadAll(FakeClient{port: "100", dnsName: "foo.bar.baz"})
+  result := LoadAll(FakeClient{services: []swarm.Service{fakeService}})
 
 	parsedService := result[0]
 
-	expectedName := "foo.bar.baz"
+	expectedName := "example.com"
 	actualName := parsedService.DNSName()
 
 	if expectedName != actualName {
 		t.Errorf("Expected DNS name of %s, got %s", expectedName, actualName)
 	}
 
-	expectedURL := "http://myservice:100"
+	expectedURL := "http://myservice:8080"
 	actualURL := parsedService.URL()
 
 	if expectedURL != actualURL {
 		t.Errorf("Expected URL of %s, got %s", expectedURL, actualURL)
 	}
+
+
+  if _, ok := parsedService.Certificate(); ok {
+    t.Error("Expected the insecure service not to have a certificate")
+  }
+}
+
+func TestLoadingTLSServices(t *testing.T) {
+
+	labels := map[string]string{
+		"ingress.targetport": "8443",
+		"ingress.dnsname":    "example.local",
+		"ingress.tls":        "true",
+		"ingress.cert":       certificate,
+		"ingress.key":        key,
+	}
+
+	fakeService := swarm.Service{
+		ID: "654",
+		Spec: swarm.ServiceSpec{
+			Annotations: swarm.Annotations{Name: "tlsservice", Labels: labels},
+		},
+	}
+
+  result := LoadAll(FakeClient{services: []swarm.Service{fakeService}})
+
+	parsedService := result[0]
+
+	expectedName := "example.local"
+	actualName := parsedService.DNSName()
+
+	if expectedName != actualName {
+		t.Errorf("Expected DNS name of %s, got %s", expectedName, actualName)
+	}
+
+	expectedURL := "http://tlsservice:8443"
+	actualURL := parsedService.URL()
+
+	if expectedURL != actualURL {
+		t.Errorf("Expected URL of %s, got %s", expectedURL, actualURL)
+	}
+
+  if _, ok := parsedService.Certificate(); !ok {
+    t.Error("Expected the TLS service to have a certificate")
+  }
+}
+
+func TestLoadingWithoutCertOrKey(t *testing.T) {
+	noCertLabels := map[string]string{
+		"ingress": "true",
+		"ingress.targetport": "200",
+		"ingress.dnsname":    "example.local",
+    "ingress.tls": "true",
+    "ingress.key": key,
+	}
+
+	ignoredService1 := swarm.Service{
+		ID: "567",
+		Spec: swarm.ServiceSpec{
+			Annotations: swarm.Annotations{Name: "ignored", Labels: noCertLabels},
+		},
+	}
+
+	noKeyLabels := map[string]string{
+		"ingress": "true",
+		"ingress.targetport": "200",
+		"ingress.dnsname":    "example.local",
+    "ingress.tls": "true",
+    "ingress.cert": certificate,
+	}
+
+	ignoredService2 := swarm.Service{
+		ID: "567",
+		Spec: swarm.ServiceSpec{
+			Annotations: swarm.Annotations{Name: "ignored", Labels: noKeyLabels},
+		},
+	}
+
+  result := LoadAll(FakeClient{services: []swarm.Service{
+    ignoredService1,
+    ignoredService2}})
+	if len(result) != 0 {
+		t.Errorf("Expected no services to be created, got %d", len(result))
+	}
 }
 
 func TestLoadingInvalidService(t *testing.T) {
-	result, _ := LoadAll(FakeClient{dnsName: "foo.bar.baz", port: "abc"})
+	labels := map[string]string{
+		"ingress.targetport": "abc",
+		"ingress.dnsname":    "example.local",
+	}
+
+	ignoredService := swarm.Service{
+		ID: "567",
+		Spec: swarm.ServiceSpec{
+			Annotations: swarm.Annotations{Name: "ignored", Labels: labels},
+		},
+	}
+
+  result := LoadAll(FakeClient{services: []swarm.Service{ignoredService}})
 	if len(result) != 0 {
-		t.Errorf("Expected no services to be created")
+		t.Errorf("Expected no services to be created, got %d", len(result))
 	}
 }

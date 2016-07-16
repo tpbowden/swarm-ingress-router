@@ -1,6 +1,8 @@
 package service
 
 import (
+  "crypto/tls"
+  "errors"
 	"log"
 	"strconv"
 
@@ -30,12 +32,15 @@ func parseServices(services []swarm.Service) []router.Routable {
 		}
 
 		if s.Spec.Annotations.Labels["ingress.tls"] == "true" {
+      parsedCert, err := extractCertificate(s.Spec.Annotations.Labels)
+      if err != nil {
+        continue
+      }
 			parsedService = router.Routable(NewTLSService(
 				s.Spec.Annotations.Name,
 				port,
 				s.Spec.Annotations.Labels["ingress.dnsname"],
-				s.Spec.Annotations.Labels["ingress.cert"],
-				s.Spec.Annotations.Labels["ingress.key"],
+        parsedCert,
 			))
 		} else {
 			parsedService = router.Routable(NewService(
@@ -51,3 +56,18 @@ func parseServices(services []swarm.Service) []router.Routable {
 
 	return serviceList
 }
+
+func extractCertificate(labels map[string]string) (tls.Certificate, error) {
+  encodedCert, certOk := labels["ingress.cert"]
+  if !certOk {
+    return tls.Certificate{}, errors.New("Could not find a certificate")
+  }
+
+  encodedKey, keyOk := labels["ingress.key"]
+  if !keyOk {
+    return tls.Certificate{}, errors.New("Could not find a key")
+  }
+
+  return tls.X509KeyPair([]byte(encodedCert), []byte(encodedKey))
+}
+

@@ -26,13 +26,8 @@ func (s TLSService) URL() string {
 
 }
 
-func NewTLSService(name string, port int, dnsName string, certificate string, key string) TLSService {
+func NewTLSService(name string, port int, dnsName string, certificate tls.Certificate) TLSService {
 
-	parsedCert, err := tls.X509KeyPair([]byte(certificate), []byte(key))
-
-	if err != nil {
-		panic(err)
-	}
-	return TLSService{name: name, port: port, dnsName: dnsName, certificate: parsedCert}
+	return TLSService{name: name, port: port, dnsName: dnsName, certificate: certificate}
 
 }

@@ -27,7 +27,5 @@ func (s TLSService) URL() string {
 }
 
 func NewTLSService(name string, port int, dnsName string, certificate tls.Certificate) TLSService {
-
 	return TLSService{name: name, port: port, dnsName: dnsName, certificate: certificate}
-
 }

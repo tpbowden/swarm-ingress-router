@@ -68,11 +68,11 @@ sKi+bSEUZYKb
 -----END CERTIFICATE-----`
 
 type FakeClient struct {
-  services []swarm.Service
+	services []swarm.Service
 }
 
 func (f FakeClient) GetServices(filters map[string]string) []swarm.Service {
-  return f.services
+	return f.services
 }
 
 func TestLoadingServices(t *testing.T) {
@@ -88,7 +88,7 @@ func TestLoadingServices(t *testing.T) {
 		},
 	}
 
-  result := LoadAll(FakeClient{services: []swarm.Service{fakeService}})
+	result := LoadAll(FakeClient{services: []swarm.Service{fakeService}})
 
 	parsedService := result[0]
 
@@ -106,10 +106,9 @@ func TestLoadingServices(t *testing.T) {
 		t.Errorf("Expected URL of %s, got %s", expectedURL, actualURL)
 	}
 
-
-  if _, ok := parsedService.Certificate(); ok {
-    t.Error("Expected the insecure service not to have a certificate")
-  }
+	if _, ok := parsedService.Certificate(); ok {
+		t.Error("Expected the insecure service not to have a certificate")
+	}
 }
 
 func TestLoadingTLSServices(t *testing.T) {
@@ -129,7 +128,7 @@ func TestLoadingTLSServices(t *testing.T) {
 		},
 	}
 
-  result := LoadAll(FakeClient{services: []swarm.Service{fakeService}})
+	result := LoadAll(FakeClient{services: []swarm.Service{fakeService}})
 
 	parsedService := result[0]
 
@@ -147,18 +146,18 @@ func TestLoadingTLSServices(t *testing.T) {
 		t.Errorf("Expected URL of %s, got %s", expectedURL, actualURL)
 	}
 
-  if _, ok := parsedService.Certificate(); !ok {
-    t.Error("Expected the TLS service to have a certificate")
-  }
+	if _, ok := parsedService.Certificate(); !ok {
+		t.Error("Expected the TLS service to have a certificate")
+	}
 }
 
 func TestLoadingWithoutCertOrKey(t *testing.T) {
 	noCertLabels := map[string]string{
-		"ingress": "true",
+		"ingress":            "true",
 		"ingress.targetport": "200",
 		"ingress.dnsname":    "example.local",
-    "ingress.tls": "true",
-    "ingress.key": key,
+		"ingress.tls":        "true",
+		"ingress.key":        key,
 	}
 
 	ignoredService1 := swarm.Service{
@@ -169,11 +168,11 @@ func TestLoadingWithoutCertOrKey(t *testing.T) {
 	}
 
 	noKeyLabels := map[string]string{
-		"ingress": "true",
+		"ingress":            "true",
 		"ingress.targetport": "200",
 		"ingress.dnsname":    "example.local",
-    "ingress.tls": "true",
-    "ingress.cert": certificate,
+		"ingress.tls":        "true",
+		"ingress.cert":       certificate,
 	}
 
 	ignoredService2 := swarm.Service{
@@ -183,9 +182,9 @@ func TestLoadingWithoutCertOrKey(t *testing.T) {
 		},
 	}
 
-  result := LoadAll(FakeClient{services: []swarm.Service{
-    ignoredService1,
-    ignoredService2}})
+	result := LoadAll(FakeClient{services: []swarm.Service{
+		ignoredService1,
+		ignoredService2}})
 	if len(result) != 0 {
 		t.Errorf("Expected no services to be created, got %d", len(result))
 	}
@@ -204,7 +203,7 @@ func TestLoadingInvalidService(t *testing.T) {
 		},
 	}
 
-  result := LoadAll(FakeClient{services: []swarm.Service{ignoredService}})
+	result := LoadAll(FakeClient{services: []swarm.Service{ignoredService}})
 	if len(result) != 0 {
 		t.Errorf("Expected no services to be created, got %d", len(result))
 	}

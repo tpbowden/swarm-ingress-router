@@ -66,7 +66,7 @@ func (s *Server) startTicker() {
 func (s *Server) getCertificate(clientHello *tls.ClientHelloInfo) (*tls.Certificate, error) {
 	cert, ok := s.router.CertificateForService(clientHello.ServerName)
 	if !ok {
-		return &tls.Certificate{}, errors.New("Failed to lookup certificate")
+		return cert, errors.New("Failed to lookup certificate")
 	}
 
 	return cert, nil

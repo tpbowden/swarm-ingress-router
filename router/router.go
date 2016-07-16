@@ -14,17 +14,18 @@ type Router struct {
 }
 
 func (r *Router) RouteToService(address string, secure bool) (http.Handler, bool) {
+	var handler http.Handler
 	route, ok := r.routes[address]
 	if !ok {
 		log.Printf("Failed to lookup service for %s", address)
-		return nil, false
+		return handler, false
 	}
 
 	serviceURL, err := url.Parse(route.URL())
 
 	if err != nil {
 		log.Printf("Failed to parse URL for service %s", address)
-		return nil, false
+		return handler, false
 	}
 
 	if secure || !route.ForceTLS() {
@@ -37,10 +38,12 @@ func (r *Router) RouteToService(address string, secure bool) (http.Handler, bool
 }
 
 func (r *Router) CertificateForService(address string) (*tls.Certificate, bool) {
+	var cert *tls.Certificate
+
 	route, ok := r.routes[address]
 	if !ok {
 		log.Printf("Failed to lookup service for %s", address)
-		return &tls.Certificate{}, false
+		return cert, false
 	}
 
 	return route.Certificate()

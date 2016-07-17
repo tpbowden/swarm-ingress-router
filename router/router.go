@@ -15,6 +15,7 @@ type Router struct {
 
 func (r *Router) RouteToService(address string, secure bool) (http.Handler, bool) {
 	var handler http.Handler
+
 	route, ok := r.routes[address]
 	if !ok {
 		log.Printf("Failed to lookup service for %s", address)
@@ -22,7 +23,6 @@ func (r *Router) RouteToService(address string, secure bool) (http.Handler, bool
 	}
 
 	serviceURL, err := url.Parse(route.URL())
-
 	if err != nil {
 		log.Printf("Failed to parse URL for service %s", address)
 		return handler, false
@@ -34,7 +34,6 @@ func (r *Router) RouteToService(address string, secure bool) (http.Handler, bool
 
 	redirectAddress := fmt.Sprintf("https://%s", address)
 	return NewRedirectHandler(redirectAddress, 301), true
-
 }
 
 func (r *Router) CertificateForService(address string) (*tls.Certificate, bool) {

@@ -33,34 +33,23 @@ func (s *Server) updateServices() {
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	dnsName := strings.Split(req.Host, ":")[0]
-
 	secure := req.TLS != nil
 
 	handler, ok := s.router.RouteToService(dnsName, secure)
-
 	if !ok {
 		fmt.Fprintf(w, "Failed to look up service")
 		return
 	}
+
 	handler.ServeHTTP(w, req)
 }
 
 func (s *Server) startTicker() {
-	go s.updateServices()
+	s.updateServices()
 
-	ticker := time.NewTicker(s.pollInterval * time.Second)
-	quit := make(chan struct{})
-	go func() {
-		for {
-			select {
-			case <-ticker.C:
-				s.updateServices()
-			case <-quit:
-				ticker.Stop()
-				return
-			}
-		}
-	}()
+	for range time.Tick(s.pollInterval * time.Second) {
+		s.updateServices()
+	}
 }
 
 func (s *Server) getCertificate(clientHello *tls.ClientHelloInfo) (*tls.Certificate, error) {
@@ -93,7 +82,6 @@ func (s *Server) Start() {
 	go s.startHTTPServer()
 	go s.startHTTPSServer()
 	select {}
-
 }
 
 func NewServer(bind string, pollInterval int) Startable {

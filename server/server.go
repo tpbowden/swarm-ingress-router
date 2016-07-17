@@ -1,11 +1,11 @@
 package server
 
 import (
+	"crypto/tls"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
-	"net/http/httputil"
-	"net/url"
 	"strings"
 	"time"
 
@@ -21,7 +21,7 @@ type Startable interface {
 type Server struct {
 	bindAddress  string
 	pollInterval time.Duration
-	router       router.Router
+	router       *router.Router
 }
 
 func (s *Server) updateServices() {
@@ -31,25 +31,18 @@ func (s *Server) updateServices() {
 	s.router.UpdateTable(services)
 }
 
-func (s *Server) handler(w http.ResponseWriter, req *http.Request) {
-	log.Printf("Starting request for %s", req.Host)
+func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	dnsName := strings.Split(req.Host, ":")[0]
 
-	srv, ok := s.router.Route(dnsName)
+	secure := req.TLS != nil
+
+	handler, ok := s.router.RouteToService(dnsName, secure)
+
 	if !ok {
-		fmt.Fprintf(w, "Failed to route to service")
+		fmt.Fprintf(w, "Failed to look up service")
 		return
 	}
-
-	url, err := url.Parse(srv.URL())
-	if err != nil {
-		fmt.Fprintf(w, "Failed to parse service URL")
-		return
-	}
-
-	log.Printf("Routing to %s", srv.URL())
-	proxy := httputil.NewSingleHostReverseProxy(url)
-	proxy.ServeHTTP(w, req)
+	handler.ServeHTTP(w, req)
 }
 
 func (s *Server) startTicker() {
@@ -70,15 +63,40 @@ func (s *Server) startTicker() {
 	}()
 }
 
-func (s Server) Start() {
-	s.startTicker()
-	http.HandleFunc("/", s.handler)
+func (s *Server) getCertificate(clientHello *tls.ClientHelloInfo) (*tls.Certificate, error) {
+	cert, ok := s.router.CertificateForService(clientHello.ServerName)
+	if !ok {
+		return cert, errors.New("Failed to lookup certificate")
+	}
+
+	return cert, nil
+}
+
+func (s *Server) startHTTPServer() {
 	bind := fmt.Sprintf("%s:8080", s.bindAddress)
-	log.Printf("Server listening on tcp://%s", bind)
-	http.ListenAndServe(fmt.Sprintf("%s:8080", s.bindAddress), nil)
+	log.Printf("Server listening for HTTP on http://%s", bind)
+	http.ListenAndServe(bind, s)
+}
+
+func (s *Server) startHTTPSServer() {
+	bind := fmt.Sprintf("%s:8443", s.bindAddress)
+	config := &tls.Config{GetCertificate: s.getCertificate}
+	listener, _ := tls.Listen("tcp", bind, config)
+	tlsServer := http.Server{Handler: s}
+
+	log.Printf("Server listening for HTTPS on https://%s", bind)
+	tlsServer.Serve(listener)
+}
+
+func (s *Server) Start() {
+	go s.startTicker()
+	go s.startHTTPServer()
+	go s.startHTTPSServer()
+	select {}
+
 }
 
 func NewServer(bind string, pollInterval int) Startable {
 	router := router.NewRouter()
-	return Startable(Server{bindAddress: bind, router: router, pollInterval: time.Duration(pollInterval)})
+	return Startable(&Server{bindAddress: bind, router: router, pollInterval: time.Duration(pollInterval)})
 }

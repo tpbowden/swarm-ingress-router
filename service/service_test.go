@@ -24,3 +24,14 @@ func TestServiceDNSNAme(t *testing.T) {
 		t.Errorf("Expected %s, got %s", expected, actual)
 	}
 }
+
+func TestServiceForceTLS(t *testing.T) {
+	s := Service{forceTLS: true}
+
+	expected := true
+	actual := s.ForceTLS()
+
+	if expected != actual {
+		t.Errorf("Expected %b, got %b", expected, actual)
+	}
+}

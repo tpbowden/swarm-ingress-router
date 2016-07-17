@@ -2,12 +2,18 @@ package router
 
 import (
 	"crypto/tls"
+	"net/http/httputil"
 	"testing"
 )
 
 type TestService struct {
-	dnsName string
-	url     string
+	dnsName  string
+	url      string
+	forceTLS bool
+}
+
+func (t TestService) ForceTLS() bool {
+	return t.forceTLS
 }
 
 func (t TestService) DNSName() string {
@@ -29,15 +35,36 @@ func TestAddingARoute(t *testing.T) {
 	services[0] = service
 	r.UpdateTable(services)
 
-	actual, ok := r.RouteToService("www.example.com")
-	expected := "http://route.local"
+	actual, ok := r.RouteToService("www.example.com", true)
 
 	if !ok {
 		t.Error("Failed to lookup %www.example.com")
 	}
 
-	if actual.String() != expected {
-		t.Errorf("Expected %s, got %s", expected, actual)
+	_, castOk := actual.(*httputil.ReverseProxy)
+
+	if !castOk {
+		t.Error("Expected result to be a reverse proxy to the service")
+	}
+}
+
+func TestRedirectingToHTTPS(t *testing.T) {
+	r := NewRouter()
+	service := Routable(TestService{dnsName: "www.example.com", forceTLS: true, url: "http://route.local"})
+	services := make([]Routable, 1)
+	services[0] = service
+	r.UpdateTable(services)
+
+	actual, ok := r.RouteToService("www.example.com", false)
+
+	if !ok {
+		t.Error("Failed to lookup %www.example.com")
+	}
+
+	_, castOk := actual.(*RedirectHandler)
+
+	if !castOk {
+		t.Error("Expected result to be a reverse proxy to the service")
 	}
 }
 
@@ -48,7 +75,7 @@ func TestRoutingToInvalidMissing(t *testing.T) {
 	services[0] = service
 	r.UpdateTable(services)
 
-	_, ok := r.RouteToService("www.nowhere.com")
+	_, ok := r.RouteToService("www.nowhere.com", true)
 
 	if ok {
 		t.Error("Expected to fail to route to non-existant service")
@@ -62,7 +89,7 @@ func TestRoutingToInvalidService(t *testing.T) {
 	services[0] = service
 	r.UpdateTable(services)
 
-	_, ok := r.RouteToService("www.nowhere.com")
+	_, ok := r.RouteToService("www.nowhere.com", true)
 
 	if ok {
 		t.Error("Expected to fail to route to invalid service")

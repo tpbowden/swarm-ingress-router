@@ -38,7 +38,7 @@ func parseServices(services []swarm.Service) []Service {
 			secure,
 			forceTLS,
 			s.Spec.Annotations.Labels["ingress.cert"],
-			s.Spec.Annotations.Labels["ingress.cert"],
+			s.Spec.Annotations.Labels["ingress.key"],
 		)
 
 		serviceList = append(serviceList, parsedService)

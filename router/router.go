@@ -53,6 +53,7 @@ func (r *Router) CertificateForService(address string) (*tls.Certificate, bool) 
 
 	certificate, err := route.Certificate()
 	if err != nil {
+		log.Print("Certificate parse failure", err)
 		return cert, false
 	}
 

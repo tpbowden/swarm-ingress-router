@@ -5,8 +5,6 @@ import (
 )
 
 type Routable interface {
-	DNSName() string
 	URL() string
-	Certificate() (*tls.Certificate, bool)
-	ForceTLS() bool
+	Certificate() (*tls.Certificate, error)
 }

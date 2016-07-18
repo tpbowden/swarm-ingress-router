@@ -5,7 +5,11 @@ import:
   - client
   - types
   - types/filters
+  - types/swarm
 - package: golang.org/x/net
   subpackages:
   - context
 - package: github.com/urfave/cli
+- package: github.com/garyburd/redigo
+  subpackages:
+  - redis

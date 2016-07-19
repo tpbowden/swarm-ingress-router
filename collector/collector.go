@@ -23,12 +23,12 @@ func (c *Collector) updateServices() {
 	json, err := json.Marshal(services)
 
 	if err != nil {
-		log.Print("Failed to encode services as json", err)
+		log.Print("Failed to encode services as json %v", err)
 		return
 	}
 
 	if cacheError := c.cache.Set("services", string(json)); cacheError != nil {
-		log.Printf("Failed to store services in cache", cacheError)
+		log.Printf("Failed to store services in cache: %v", cacheError)
 	}
 }
 

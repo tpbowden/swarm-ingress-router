@@ -92,7 +92,7 @@ func (s *Server) Start() {
 	select {}
 }
 
-func NewServer(bind string, redis string) Startable {
+func NewServer(bind, redis string) Startable {
 	router := router.NewRouter()
 	cache := cache.NewCache(redis)
 	return Startable(&Server{bindAddress: bind, router: router, cache: cache})

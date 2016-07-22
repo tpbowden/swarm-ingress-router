@@ -12,7 +12,7 @@ type Cache struct {
 	address string
 }
 
-func (c *Cache) Set(key string, value string) error {
+func (c *Cache) Set(key, value string) error {
 	conn, err := redis.Dial("tcp", c.address)
 
 	if err != nil {

@@ -1,29 +1,26 @@
 package service
 
 import (
-	"crypto/tls"
-	"errors"
 	"log"
 	"strconv"
 
 	"github.com/docker/engine-api/types/swarm"
 
 	"github.com/tpbowden/swarm-ingress-router/docker"
-	"github.com/tpbowden/swarm-ingress-router/router"
 )
 
-func LoadAll(client docker.ServicePuller) []router.Routable {
+func LoadAll(client docker.ServicePuller) []Service {
 	filters := map[string]string{"label": "ingress=true"}
 
 	services := client.GetServices(filters)
 	return parseServices(services)
 }
 
-func parseServices(services []swarm.Service) []router.Routable {
-	var serviceList []router.Routable
+func parseServices(services []swarm.Service) []Service {
+	var serviceList []Service
 
 	for _, s := range services {
-		var parsedService router.Routable
+		var parsedService Service
 
 		port, err := strconv.Atoi(s.Spec.Annotations.Labels["ingress.targetport"])
 		if err != nil {
@@ -31,44 +28,22 @@ func parseServices(services []swarm.Service) []router.Routable {
 			continue
 		}
 
-		if s.Spec.Annotations.Labels["ingress.tls"] == "true" {
-			forceTLS := s.Spec.Annotations.Labels["ingress.forcetls"] == "true"
-			parsedCert, err := extractCertificate(s.Spec.Annotations.Labels)
-			if err != nil {
-				continue
-			}
-			parsedService = router.Routable(NewTLSService(
-				s.Spec.Annotations.Name,
-				port,
-				s.Spec.Annotations.Labels["ingress.dnsname"],
-				parsedCert,
-				forceTLS,
-			))
-		} else {
-			parsedService = router.Routable(NewService(
-				s.Spec.Annotations.Name,
-				port,
-				s.Spec.Annotations.Labels["ingress.dnsname"],
-			))
-		}
+		secure := s.Spec.Annotations.Labels["ingress.tls"] == "true"
+		forceTLS := s.Spec.Annotations.Labels["ingress.forcetls"] == "true"
+
+		parsedService = NewService(
+			s.Spec.Annotations.Name,
+			port,
+			s.Spec.Annotations.Labels["ingress.dnsname"],
+			secure,
+			forceTLS,
+			s.Spec.Annotations.Labels["ingress.cert"],
+			s.Spec.Annotations.Labels["ingress.key"],
+		)
 
 		serviceList = append(serviceList, parsedService)
 
 	}
 
 	return serviceList
-}
-
-func extractCertificate(labels map[string]string) (tls.Certificate, error) {
-	encodedCert, certOk := labels["ingress.cert"]
-	if !certOk {
-		return tls.Certificate{}, errors.New("Could not find a certificate")
-	}
-
-	encodedKey, keyOk := labels["ingress.key"]
-	if !keyOk {
-		return tls.Certificate{}, errors.New("Could not find a key")
-	}
-
-	return tls.X509KeyPair([]byte(encodedCert), []byte(encodedKey))
 }

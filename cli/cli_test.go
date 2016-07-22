@@ -13,21 +13,21 @@ var (
 
 type TestServer struct {
 	bindAddress string
-	interval    int
+	redis       string
 }
 
 func (t TestServer) Start() {
 	serverStarted = true
 }
 
-func newTestServer(bind string, interval int) server.Startable {
+func newTestServer(bind string, redis string) server.Startable {
 	fakeServer.bindAddress = bind
-	fakeServer.interval = interval
+	fakeServer.redis = redis
 	return server.Startable(fakeServer)
 }
 
 func TestStartingTheServerWithCLI(t *testing.T) {
-	args := []string{"cli", "-b", "1.2.3.4", "-i", "100"}
+	args := []string{"cli", "-r", "redis-url", "server", "-b", "1.2.3.4"}
 	Start(args, newTestServer)
 
 	expectedAddr := "1.2.3.4"
@@ -36,8 +36,8 @@ func TestStartingTheServerWithCLI(t *testing.T) {
 		t.Errorf("Expected bind address to equal %s, got %s", expectedAddr, actualAddr)
 	}
 
-	expectedInterval := 100
-	actualInterval := fakeServer.interval
+	expectedInterval := "redis-url"
+	actualInterval := fakeServer.redis
 	if expectedInterval != actualInterval {
 		t.Errorf("Expected interval to equal %d, got %d", expectedInterval, actualInterval)
 	}

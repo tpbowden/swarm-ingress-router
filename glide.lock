@@ -1,5 +1,5 @@
-hash: a931585239d3494411f2200864fc9f51705703039dffdf84b37c123de5b30727
-updated: 2016-07-10T17:18:50.944069686+01:00
+hash: 762c331c0c86d7644b12b3004dcdc6de7283081262d178afb75be23df8fcb7da
+updated: 2016-07-18T09:27:37.102391933+01:00
 imports:
 - name: github.com/docker/distribution
   version: 4e17ab5d319ac5b70b2769442947567a83386fbc
@@ -12,13 +12,13 @@ imports:
   - client
   - types
   - types/filters
+  - types/swarm
   - client/transport
   - client/transport/cancellable
   - types/container
   - types/network
   - types/reference
   - types/registry
-  - types/swarm
   - types/time
   - types/versions
   - types/blkiodev
@@ -31,6 +31,10 @@ imports:
   - nat
 - name: github.com/docker/go-units
   version: f2d77a61e3c169b43402a0a1e84f06daf29b8190
+- name: github.com/garyburd/redigo
+  version: b8dc90050f24c1a73a52f107f3f575be67b21b7c
+  subpackages:
+  - redis
 - name: github.com/Microsoft/go-winio
   version: ce2922f643c8fd76b46cadc7f404a06282678b34
 - name: github.com/opencontainers/runc

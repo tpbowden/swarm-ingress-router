@@ -2,14 +2,14 @@ package server
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"strings"
-	"time"
 
-	"github.com/tpbowden/swarm-ingress-router/docker"
+	"github.com/tpbowden/swarm-ingress-router/cache"
 	"github.com/tpbowden/swarm-ingress-router/router"
 	"github.com/tpbowden/swarm-ingress-router/service"
 )
@@ -19,16 +19,29 @@ type Startable interface {
 }
 
 type Server struct {
-	bindAddress  string
-	pollInterval time.Duration
-	router       *router.Router
+	bindAddress string
+	cache       cache.Cache
+	router      *router.Router
 }
 
-func (s *Server) updateServices() {
-	log.Print("Updating routes")
-	client := docker.NewClient()
-	services := service.LoadAll(client)
+func (s *Server) syncServices() {
+	var services []service.Service
+	servicesJson, getErr := s.cache.Get("services")
+
+	if getErr != nil {
+		log.Printf("Failed to load servics from cache", getErr)
+		return
+	}
+
+	err := json.Unmarshal(servicesJson, &services)
+
+	if err != nil {
+		log.Print("Failed to sync services", err)
+		return
+	}
+
 	s.router.UpdateTable(services)
+	log.Printf("Routes updated")
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
@@ -42,14 +55,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 
 	handler.ServeHTTP(w, req)
-}
-
-func (s *Server) startTicker() {
-	s.updateServices()
-
-	for range time.Tick(s.pollInterval * time.Second) {
-		s.updateServices()
-	}
 }
 
 func (s *Server) getCertificate(clientHello *tls.ClientHelloInfo) (*tls.Certificate, error) {
@@ -78,13 +83,17 @@ func (s *Server) startHTTPSServer() {
 }
 
 func (s *Server) Start() {
-	go s.startTicker()
+	go func() {
+		s.syncServices()
+		s.cache.Subscribe("inress-router", s.syncServices)
+	}()
 	go s.startHTTPServer()
 	go s.startHTTPSServer()
 	select {}
 }
 
-func NewServer(bind string, pollInterval int) Startable {
+func NewServer(bind string, redis string) Startable {
 	router := router.NewRouter()
-	return Startable(&Server{bindAddress: bind, router: router, pollInterval: time.Duration(pollInterval)})
+	cache := cache.NewCache(redis)
+	return Startable(&Server{bindAddress: bind, router: router, cache: cache})
 }

@@ -3,7 +3,6 @@ package service
 import (
 	"crypto/tls"
 	"fmt"
-	"log"
 )
 
 type Service struct {
@@ -17,8 +16,6 @@ type Service struct {
 }
 
 func (s Service) Certificate() (tls.Certificate, error) {
-	log.Print(s.EncodedCert)
-	log.Print(s.EncodedKey)
 	return tls.X509KeyPair([]byte(s.EncodedCert), []byte(s.EncodedKey))
 }
 

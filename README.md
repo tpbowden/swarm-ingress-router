@@ -19,27 +19,29 @@ Next you need to start Redis which will store service configuration
 
     docker service create --name router-storage --network router-management redis:3.2-alpine
 
-Then you have to start the router's backend on management network
+Then you have to start the router's backend on management network. The service must be restricted to
+run only on master nodes (as it has to query for services).
 
     docker service create --name router-backend --label constraint:role=manager --mount \
     target=/var/run/docker.sock,source=/var/run/docker.sock,type=bind --network router-management \
-    router:latest -r router-storage:6379 collector
+    tpbowden/swarm-ingress-router:latest -r router-storage:6379 collector
 
 Now you can start the router's frontend on both the management and frontend network.
 It must listen on the standard HTTP/HTTPS ports 
 
     docker service create --name router -p 80:8080 -p 443:8443 --network frontends \
-    --network router-management router:latest -r router-storage:6379 server -b 0.0.0.0
+      --network router-management tpbowden/swarm-ingress-router:latest -r \
+      router-storage:6379 server -b 0.0.0.0
 
 Finally, start your frontend service on the frontends network and it will be available on all of your Swarm nodes:
 
     docker service create --name frontend --label ingress=true --label ingress.dnsname=example.local \
-      --label ingress.targetport=80 --network frontends --label ingress.tls=true --label ingress.forcetls=true \
-      --label ingress.cert="$(cat fixtures/cert.crt)" --label ingress.key="$(cat fixtures/key.key)" \
-      nginx:stable-alpine
+      --label ingress.targetport=80 --network frontends --label ingress.tls=true --label \
+      ingress.forcetls=true --label ingress.cert="$(cat fixtures/cert.crt)" --label \
+      ingress.key="$(cat fixtures/key.key)" nginx:stable-alpine
 
-If you add a DNS record for `example.local` pointing to your Docker node you will be routed to the service.
-The service must be restricted to run only on master nodes (as it has to query for services).
+If you add a DNS record for `example.local` pointing to your Docker node in `/etc/hosts` you will be
+routed to the service.
 
 ## Usage
 
@@ -67,3 +69,4 @@ as the router.
 * Better logging
 * Command line argument for log level
 * Use Docker events to stay in sync and long polling as a fallback
+* Create a docker-compose file which can be converted into a stack

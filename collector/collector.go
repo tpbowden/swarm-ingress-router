@@ -30,6 +30,8 @@ func (c *Collector) updateServices() {
 	if cacheError := c.cache.Set("services", string(json)); cacheError != nil {
 		log.Printf("Failed to store services in cache: %v", cacheError)
 	}
+
+
 }
 
 func (c *Collector) Start() {

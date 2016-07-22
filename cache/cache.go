@@ -2,6 +2,8 @@ package cache
 
 import (
 	"errors"
+	"log"
+	"time"
 
 	"github.com/garyburd/redigo/redis"
 )
@@ -18,10 +20,36 @@ func (c *Cache) Set(key string, value string) error {
 	}
 
 	defer conn.Close()
+	conn.Send("PUBLISH", "ingress-router", "updated")
 	if _, setErr := conn.Do("SET", key, value); setErr != nil {
 		return setErr
 	}
 	return nil
+}
+
+func (c *Cache) Subscribe(channel string, action func()) {
+	conn, err := redis.Dial("tcp", c.address)
+	if err != nil {
+		log.Print("Failed to connect to redis, retrying in 5 seconds")
+		time.Sleep(5 * time.Second)
+		c.Subscribe(channel, action)
+		return
+	}
+
+	defer conn.Close()
+	conn.Do("SUBSCRIBE", "ingress-router")
+
+	for {
+		_, err := conn.Receive()
+		if err != nil {
+			log.Print("Failed to connect to redis, retrying in 5 seconds")
+			time.Sleep(5 * time.Second)
+			c.Subscribe(channel, action)
+			return
+		}
+
+		action()
+	}
 }
 
 func (c *Cache) Get(key string) ([]byte, error) {
@@ -40,13 +68,11 @@ func (c *Cache) Get(key string) ([]byte, error) {
 	}
 
 	b, ok := result.([]byte)
-
 	if !ok {
 		return s, errors.New("Failed to parse value as a string")
 	}
 
 	return b, nil
-
 }
 
 func NewCache(address string) Cache {

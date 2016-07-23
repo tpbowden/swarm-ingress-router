@@ -47,10 +47,12 @@ func (s *Server) syncServices() {
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	dnsName := strings.Split(req.Host, ":")[0]
+	log.Printf("Started %s \"%s\" for %s using host %s", req.Method, req.URL, req.RemoteAddr, dnsName)
 	secure := req.TLS != nil
 
 	handler, ok := s.router.RouteToService(dnsName, secure)
 	if !ok {
+		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintf(w, "Failed to look up service")
 		return
 	}

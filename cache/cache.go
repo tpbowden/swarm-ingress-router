@@ -2,24 +2,19 @@ package cache
 
 import (
 	"errors"
-	"log"
 	"time"
 
 	"github.com/garyburd/redigo/redis"
 )
 
 type Cache struct {
-	address string
+	pool *redis.Pool
 }
 
 func (c *Cache) Set(key, value string) error {
-	conn, err := redis.Dial("tcp", c.address)
-
-	if err != nil {
-		return err
-	}
-
+	conn := c.pool.Get()
 	defer conn.Close()
+
 	conn.Send("PUBLISH", "ingress-router", "updated")
 	if _, setErr := conn.Do("SET", key, value); setErr != nil {
 		return setErr
@@ -27,25 +22,19 @@ func (c *Cache) Set(key, value string) error {
 	return nil
 }
 
-func (c *Cache) Subscribe(channel string, action func()) {
-	conn, err := redis.Dial("tcp", c.address)
+func (c *Cache) Subscribe(channel string, action func()) error {
+	conn := c.pool.Get()
+	defer conn.Close()
+
+	_, err := conn.Do("SUBSCRIBE", "ingress-router")
+
 	if err != nil {
-		log.Print("Failed to connect to redis, retrying in 5 seconds")
-		time.Sleep(5 * time.Second)
-		c.Subscribe(channel, action)
-		return
+		return err
 	}
 
-	defer conn.Close()
-	conn.Do("SUBSCRIBE", "ingress-router")
-
 	for {
-		_, err := conn.Receive()
-		if err != nil {
-			log.Print("Failed to connect to redis, retrying in 5 seconds")
-			time.Sleep(5 * time.Second)
-			c.Subscribe(channel, action)
-			return
+		if _, receiveErr := conn.Receive(); receiveErr != nil {
+			return receiveErr
 		}
 
 		action()
@@ -54,17 +43,13 @@ func (c *Cache) Subscribe(channel string, action func()) {
 
 func (c *Cache) Get(key string) ([]byte, error) {
 	var s []byte
-	conn, err := redis.Dial("tcp", c.address)
 
-	if err != nil {
-		return s, err
-	}
-
+	conn := c.pool.Get()
 	defer conn.Close()
 
-	result, getErr := conn.Do("GET", key)
-	if getErr != nil {
-		return s, getErr
+	result, err := conn.Do("GET", key)
+	if err != nil {
+		return s, err
 	}
 
 	b, ok := result.([]byte)
@@ -76,5 +61,17 @@ func (c *Cache) Get(key string) ([]byte, error) {
 }
 
 func NewCache(address string) Cache {
-	return Cache{address: address}
+	pool := &redis.Pool{
+		MaxIdle:     2,
+		IdleTimeout: 300 * time.Second,
+		Dial: func() (redis.Conn, error) {
+			return redis.Dial("tcp", address)
+		},
+		TestOnBorrow: func(c redis.Conn, t time.Time) error {
+			_, err := c.Do("PING")
+			return err
+		},
+	}
+
+	return Cache{pool: pool}
 }

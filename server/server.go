@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/tpbowden/swarm-ingress-router/cache"
 	"github.com/tpbowden/swarm-ingress-router/router"
@@ -85,7 +86,11 @@ func (s *Server) startHTTPSServer() {
 func (s *Server) Start() {
 	go func() {
 		s.syncServices()
-		s.cache.Subscribe("inress-router", s.syncServices)
+		for {
+			err := s.cache.Subscribe("inress-router", s.syncServices)
+			log.Printf("Subscription to updates lost, retrying in 10 seconds: %v", err)
+			time.Sleep(10 * time.Second)
+		}
 	}()
 	go s.startHTTPServer()
 	go s.startHTTPSServer()

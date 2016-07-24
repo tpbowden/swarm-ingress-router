@@ -16,8 +16,8 @@ func (c *Cache) Set(key, value string) error {
 	defer conn.Close()
 
 	conn.Send("PUBLISH", "ingress-router", "updated")
-	if _, setErr := conn.Do("SET", key, value); setErr != nil {
-		return setErr
+	if _, err := conn.Do("SET", key, value); err != nil {
+		return err
 	}
 	return nil
 }
@@ -26,15 +26,13 @@ func (c *Cache) Subscribe(channel string, action func()) error {
 	conn := c.pool.Get()
 	defer conn.Close()
 
-	_, err := conn.Do("SUBSCRIBE", "ingress-router")
-
-	if err != nil {
+	if _, err := conn.Do("SUBSCRIBE", "ingress-router"); err != nil {
 		return err
 	}
 
 	for {
-		if _, receiveErr := conn.Receive(); receiveErr != nil {
-			return receiveErr
+		if _, err := conn.Receive(); err != nil {
+			return err
 		}
 
 		action()

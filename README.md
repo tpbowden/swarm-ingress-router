@@ -22,7 +22,7 @@ Next you need to start Redis which will store service configuration
 Then you have to start the router's backend on management network. The service must be restricted to
 run only on master nodes (as it has to query for services).
 
-    docker service create --name router-backend --label constraint:role=manager --mount \
+    docker service create --name router-backend --constraint node.role==manager --mount \
     target=/var/run/docker.sock,source=/var/run/docker.sock,type=bind --network router-management \
     tpbowden/swarm-ingress-router:latest -r router-storage:6379 collector
 

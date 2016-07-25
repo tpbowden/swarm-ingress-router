@@ -22,13 +22,13 @@ type RouterTest struct {
 }
 
 var routerTests = []RouterTest{
-	RouterTest{
+	{
 		description: "A valid service returns an HTTP proxy",
 		host:        "example.local",
 		success:     true,
 		proxy:       true,
 		services: []service.Service{
-			service.Service{
+			{
 				Name:     "my-service",
 				Port:     3000,
 				DNSName:  "example.local",
@@ -37,13 +37,13 @@ var routerTests = []RouterTest{
 			},
 		},
 	},
-	RouterTest{
+	{
 		description: "A secure connection to an insecure service is not successful",
 		host:        "example.local",
 		success:     false,
 		secure:      true,
 		services: []service.Service{
-			service.Service{
+			{
 				Name:    "my-service",
 				Port:    3000,
 				DNSName: "example.local",
@@ -51,29 +51,29 @@ var routerTests = []RouterTest{
 			},
 		},
 	},
-	RouterTest{
+	{
 		description: "A missing service does not return successfully",
 		host:        "example.local",
 		services:    []service.Service{},
 	},
-	RouterTest{
+	{
 		description: "A service with an invalid URL does not return successfully",
 		host:        "example.local",
 		services: []service.Service{
-			service.Service{
+			{
 				Name:    "[::1]a",
 				Port:    3000,
 				DNSName: "example.local",
 			},
 		},
 	},
-	RouterTest{
+	{
 		description: "An insecure connection with forceTLS returns a redirect",
 		host:        "example.local",
 		success:     true,
 		redirect:    true,
 		services: []service.Service{
-			service.Service{
+			{
 				Name:     "my-service",
 				Port:     3000,
 				DNSName:  "example.local",
@@ -118,10 +118,10 @@ type CertificateTest struct {
 }
 
 var certificateTests = []CertificateTest{
-	CertificateTest{
+	{
 		description: "Missing services do not return successfully",
 		services: []service.Service{
-			service.Service{
+			{
 				Name:    "my-service",
 				Port:    3000,
 				DNSName: "example.local",
@@ -131,10 +131,10 @@ var certificateTests = []CertificateTest{
 		host:    "foo.local",
 		success: false,
 	},
-	CertificateTest{
+	{
 		description: "Invalid certificates do not return successfully",
 		services: []service.Service{
-			service.Service{
+			{
 				Name:        "my-service",
 				Port:        3000,
 				DNSName:     "example.local",
@@ -146,10 +146,10 @@ var certificateTests = []CertificateTest{
 		host:    "example.local",
 		success: false,
 	},
-	CertificateTest{
+	{
 		description: "Valid certificates return successfully",
 		services: []service.Service{
-			service.Service{
+			{
 				Name:        "my-service",
 				Port:        3000,
 				DNSName:     "example.local",

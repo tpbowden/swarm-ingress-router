@@ -23,11 +23,11 @@ type LoadServicesTest struct {
 }
 
 var loadServicesTests = []LoadServicesTest{
-	LoadServicesTest{
+	{
 		description: "It parses and returns valid services",
 		resultCount: 1,
 		expected: []Service{
-			Service{
+			{
 				Name:        "myservice",
 				Port:        8080,
 				DNSName:     "example.com",
@@ -38,7 +38,7 @@ var loadServicesTests = []LoadServicesTest{
 			},
 		},
 		services: []swarm.Service{
-			swarm.Service{
+			{
 				ID: "123",
 				Spec: swarm.ServiceSpec{
 					Annotations: swarm.Annotations{
@@ -56,11 +56,11 @@ var loadServicesTests = []LoadServicesTest{
 			},
 		},
 	},
-	LoadServicesTest{
+	{
 		description: "Discards services with an invalid port",
 		expected:    []Service{},
 		services: []swarm.Service{
-			swarm.Service{
+			{
 				ID: "123",
 				Spec: swarm.ServiceSpec{
 					Annotations: swarm.Annotations{
@@ -85,7 +85,7 @@ func TestLoadingServices(t *testing.T) {
 			t.Errorf("Failed: %s", test.description)
 		}
 
-		for i, _ := range result {
+		for i := range result {
 			if !reflect.DeepEqual(result[i], test.expected[i]) {
 				t.Errorf("Equality failed: %s", test.description)
 			}

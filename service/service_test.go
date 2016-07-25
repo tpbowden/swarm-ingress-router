@@ -26,13 +26,13 @@ type CertificateTest struct {
 }
 
 var certificateTests = []CertificateTest{
-	CertificateTest{
+	{
 		description: "Invalid certificate returns false",
 		cert:        "a cert",
 		key:         "a cert",
 		success:     false,
 	},
-	CertificateTest{
+	{
 		description: "Valid certificate returns true",
 		cert:        string(certificate),
 		key:         string(key),

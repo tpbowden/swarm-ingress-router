@@ -31,7 +31,6 @@ func (c *Collector) updateServices() {
 		log.Printf("Failed to store services in cache: %v", cacheError)
 	}
 
-
 }
 
 func (c *Collector) Start() {

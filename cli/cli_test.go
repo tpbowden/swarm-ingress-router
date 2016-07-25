@@ -36,10 +36,10 @@ func TestStartingTheServerWithCLI(t *testing.T) {
 		t.Errorf("Expected bind address to equal %s, got %s", expectedAddr, actualAddr)
 	}
 
-	expectedInterval := "redis-url"
-	actualInterval := fakeServer.redis
-	if expectedInterval != actualInterval {
-		t.Errorf("Expected interval to equal %d, got %d", expectedInterval, actualInterval)
+	expectedRedis := "redis-url"
+	actualRedis := fakeServer.redis
+	if expectedRedis != actualRedis {
+		t.Errorf("Expected interval to equal %s, got %s", expectedRedis, actualRedis)
 	}
 
 	if !serverStarted {

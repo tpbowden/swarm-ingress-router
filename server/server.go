@@ -30,7 +30,7 @@ func (s *Server) syncServices() {
 	servicesJson, getErr := s.cache.Get("services")
 
 	if getErr != nil {
-		log.Printf("Failed to load servics from cache", getErr)
+		log.Printf("Failed to load servics from cache: %v", getErr)
 		return
 	}
 

@@ -23,7 +23,7 @@ func (c *Collector) updateServices() {
 	json, err := json.Marshal(services)
 
 	if err != nil {
-		log.Print("Failed to encode services as json %v", err)
+		log.Printf("Failed to encode services as json %v", err)
 		return
 	}
 

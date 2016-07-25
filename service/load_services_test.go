@@ -28,8 +28,7 @@ var loadServicesTests = []LoadServicesTest{
 		resultCount: 1,
 		expected: []Service{
 			{
-				Name:        "myservice",
-				Port:        8080,
+				URL:         "http://myservice:8080",
 				DNSName:     "example.com",
 				Secure:      true,
 				ForceTLS:    true,

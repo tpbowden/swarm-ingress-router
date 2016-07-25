@@ -29,8 +29,7 @@ var routerTests = []RouterTest{
 		proxy:       true,
 		services: []service.Service{
 			{
-				Name:     "my-service",
-				Port:     3000,
+				URL:      "http://my-service:3000",
 				DNSName:  "example.local",
 				Secure:   false,
 				ForceTLS: false,
@@ -44,8 +43,7 @@ var routerTests = []RouterTest{
 		secure:      true,
 		services: []service.Service{
 			{
-				Name:    "my-service",
-				Port:    3000,
+				URL:     "http://my-service:3000",
 				DNSName: "example.local",
 				Secure:  false,
 			},
@@ -61,8 +59,7 @@ var routerTests = []RouterTest{
 		host:        "example.local",
 		services: []service.Service{
 			{
-				Name:    "[::1]a",
-				Port:    3000,
+				URL:     "http://[::1]a:3000",
 				DNSName: "example.local",
 			},
 		},
@@ -74,8 +71,7 @@ var routerTests = []RouterTest{
 		redirect:    true,
 		services: []service.Service{
 			{
-				Name:     "my-service",
-				Port:     3000,
+				URL:      "http://my-service:3000",
 				DNSName:  "example.local",
 				ForceTLS: true,
 			},
@@ -122,8 +118,7 @@ var certificateTests = []CertificateTest{
 		description: "Missing services do not return successfully",
 		services: []service.Service{
 			{
-				Name:    "my-service",
-				Port:    3000,
+				URL:     "http://my-service:3000",
 				DNSName: "example.local",
 				Secure:  false,
 			},
@@ -132,26 +127,10 @@ var certificateTests = []CertificateTest{
 		success: false,
 	},
 	{
-		description: "Invalid certificates do not return successfully",
-		services: []service.Service{
-			{
-				Name:        "my-service",
-				Port:        3000,
-				DNSName:     "example.local",
-				Secure:      true,
-				EncodedCert: "some data",
-				EncodedKey:  "some data",
-			},
-		},
-		host:    "example.local",
-		success: false,
-	},
-	{
 		description: "Valid certificates return successfully",
 		services: []service.Service{
 			{
-				Name:        "my-service",
-				Port:        3000,
+				URL:         "http://my-service:3000",
 				DNSName:     "example.local",
 				Secure:      true,
 				EncodedCert: string(certificate),

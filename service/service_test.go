@@ -10,7 +10,7 @@ var key, keyErr = ioutil.ReadFile("../fixtures/key.key")
 
 func TestServiceURL(t *testing.T) {
 	s := NewService("foo", 8080, "bar", false, false, "", "")
-	url := s.URL()
+	url := s.URL
 	expected := "http://foo:8080"
 
 	if url != expected {
@@ -50,11 +50,9 @@ func TestServiceCertificate(t *testing.T) {
 	}
 
 	for _, test := range certificateTests {
-		subject := Service{EncodedCert: test.cert, EncodedKey: test.key}
+		subject := Service{Secure: true, EncodedCert: test.cert, EncodedKey: test.key}
 
-		_, err := subject.Certificate()
-
-		ok := err == nil
+		ok := subject.ParseCertificate()
 
 		if ok != test.success {
 			t.Errorf("Failed: %s", test.description)

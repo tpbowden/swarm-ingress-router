@@ -30,7 +30,7 @@ func (r *Router) RouteToService(address string, secure bool) (http.Handler, bool
 		return handler, false
 	}
 
-	serviceURL, err := url.Parse(route.URL())
+	serviceURL, err := url.Parse(route.URL)
 	if err != nil {
 		log.Printf("Failed to parse URL for service %s", address)
 		return handler, false
@@ -54,11 +54,7 @@ func (r *Router) CertificateForService(address string) (*tls.Certificate, bool) 
 		return cert, false
 	}
 
-	certificate, err := route.Certificate()
-	if err != nil {
-		log.Print("Certificate parse failure", err)
-		return cert, false
-	}
+	certificate := route.Certificate()
 
 	return &certificate, true
 }
@@ -69,6 +65,7 @@ func (r *Router) UpdateTable(services []service.Service) {
 
 	for _, s := range services {
 		log.Printf("Registering service for %s", s.DNSName)
+		s.ParseCertificate()
 		newTable[s.DNSName] = s
 	}
 

@@ -8,6 +8,7 @@ import (
 	"github.com/tpbowden/swarm-ingress-router/version"
 )
 
+// Start initializes the application as a command line app
 func Start(args []string, serverInit func(string, string) server.Startable) {
 	app := cli.NewApp()
 

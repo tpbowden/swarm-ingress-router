@@ -4,6 +4,10 @@ Route DNS names to labelled Swarm services using Docker 1.12's internal service 
 
 [![Build Status](https://travis-ci.org/tpbowden/swarm-ingress-router.svg?branch=master)](https://travis-ci.org/tpbowden/swarm-ingress-router) [![Go Report Card](https://goreportcard.com/badge/github.com/tpbowden/swarm-ingress-router)](https://goreportcard.com/report/github.com/tpbowden/swarm-ingress-router)
 
+WARNING: This application depends on features in Docker's currently experimental realease 1.12. There are still
+serveral bugs which can cause things to break, especially related to container IP address management across multiple
+Swarm hosts.
+
 ## Features
 
 * No external load balancer or config files needed making for easy deployments
@@ -13,6 +17,9 @@ Route DNS names to labelled Swarm services using Docker 1.12's internal service 
 * Incredibly lightweight image (less than 20MB after decompression)
 
 ## Installation
+
+These are the manual steps to install the app. You can run `bootstrap.sh` to quickly create the required
+services automatically.
 
 First of all you will need to create a network for your frontend services to run on and one for storage:
 
@@ -27,15 +34,17 @@ Then you have to start the router's backend on management network. The service m
 run only on master nodes (as it has to query for services).
 
     docker service create --name router-backend --constraint node.role==manager --mount \
-    target=/var/run/docker.sock,source=/var/run/docker.sock,type=bind --network router-management \
-    tpbowden/swarm-ingress-router:latest -r router-storage:6379 collector
+      target=/var/run/docker.sock,source=/var/run/docker.sock,type=bind --network router-management \
+      tpbowden/swarm-ingress-router:latest -r router-storage:6379 collector
 
 Now you can start the router's frontend on both the management and frontend network.
 It must listen on the standard HTTP/HTTPS ports 
 
-    docker service create --name router -p 80:8080 -p 443:8443 --network frontends \
+    docker service create --name router --mode global -p 80:8080 -p 443:8443 --network frontends \
       --network router-management tpbowden/swarm-ingress-router:latest -r \
       router-storage:6379 server -b 0.0.0.0
+
+### Start a demo app
 
 Finally, start your frontend service on the frontends network and it will be available on all of your Swarm nodes:
 

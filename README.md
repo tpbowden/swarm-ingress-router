@@ -2,6 +2,10 @@
 
 Route DNS names to labelled Swarm services using Docker 1.12's internal service load balancing
 
+[![Build Status](https://travis-ci.org/tpbowden/swarm-ingress-router.svg?branch=master)](https://travis-ci.org/tpbowden/swarm-ingress-router) [![Go Report Card](https://goreportcard.com/badge/github.com/tpbowden/swarm-ingress-router)](https://goreportcard.com/report/github.com/tpbowden/swarm-ingress-router)
+
+## Features
+
 * No external load balancer or config files needed making for easy deployments
 * Integrated TLS decryption for services which provide a certificate and key
 * Automatic service discovery and load balancing handled by Docker

@@ -1,5 +1,5 @@
 hash: 762c331c0c86d7644b12b3004dcdc6de7283081262d178afb75be23df8fcb7da
-updated: 2016-07-18T09:27:37.102391933+01:00
+updated: 2016-07-25T09:18:31.72479288+01:00
 imports:
 - name: github.com/docker/distribution
   version: 4e17ab5d319ac5b70b2769442947567a83386fbc
@@ -35,6 +35,7 @@ imports:
   version: b8dc90050f24c1a73a52f107f3f575be67b21b7c
   subpackages:
   - redis
+  - internal
 - name: github.com/Microsoft/go-winio
   version: ce2922f643c8fd76b46cadc7f404a06282678b34
 - name: github.com/opencontainers/runc

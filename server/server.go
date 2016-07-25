@@ -15,10 +15,12 @@ import (
 	"github.com/tpbowden/swarm-ingress-router/service"
 )
 
+// Startable is anything which can be started and will block until stopped
 type Startable interface {
 	Start()
 }
 
+// Server holds all state for routing to services
 type Server struct {
 	bindAddress string
 	cache       cache.Cache
@@ -27,14 +29,14 @@ type Server struct {
 
 func (s *Server) syncServices() {
 	var services []service.Service
-	servicesJson, getErr := s.cache.Get("services")
+	servicesJSON, getErr := s.cache.Get("services")
 
 	if getErr != nil {
 		log.Printf("Failed to load servics from cache: %v", getErr)
 		return
 	}
 
-	err := json.Unmarshal(servicesJson, &services)
+	err := json.Unmarshal(servicesJSON, &services)
 
 	if err != nil {
 		log.Print("Failed to sync services", err)
@@ -45,6 +47,7 @@ func (s *Server) syncServices() {
 	log.Printf("Routes updated")
 }
 
+// ServerHTTP is the default HTTP handler for services
 func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	dnsName := strings.Split(req.Host, ":")[0]
 	log.Printf("Started %s \"%s\" for %s using host %s", req.Method, req.URL, req.RemoteAddr, dnsName)
@@ -85,6 +88,7 @@ func (s *Server) startHTTPSServer() {
 	tlsServer.Serve(listener)
 }
 
+// Start start the server and listens for changes to the services
 func (s *Server) Start() {
 	go func() {
 		s.syncServices()
@@ -99,6 +103,7 @@ func (s *Server) Start() {
 	select {}
 }
 
+// NewServer returns a new instrance of the server
 func NewServer(bind, redis string) Startable {
 	router := router.NewRouter()
 	cache := cache.NewCache(redis)

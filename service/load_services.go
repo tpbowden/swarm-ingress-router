@@ -9,6 +9,7 @@ import (
 	"github.com/tpbowden/swarm-ingress-router/docker"
 )
 
+// LoadAll queries docker for its service and parses the ones with correct labels
 func LoadAll(client docker.ServicePuller) []Service {
 	filters := map[string]string{"label": "ingress=true"}
 

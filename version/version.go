@@ -4,6 +4,7 @@ import (
 	"fmt"
 )
 
+// Version is the application's current version
 var Version = newVersionNumber(0, 2, 0)
 
 type semverNumber struct {
@@ -12,6 +13,7 @@ type semverNumber struct {
 	patch int
 }
 
+// String returns the version number as a string
 func (v *semverNumber) String() string {
 	return fmt.Sprintf("%d.%d.%d", v.major, v.minor, v.patch)
 }

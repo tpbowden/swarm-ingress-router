@@ -10,6 +10,7 @@ import (
 	"github.com/tpbowden/swarm-ingress-router/service"
 )
 
+// Collector holds all state for the sollector
 type Collector struct {
 	pollInterval time.Duration
 	cache        cache.Cache
@@ -33,6 +34,7 @@ func (c *Collector) updateServices() {
 
 }
 
+// Start causes the collector to begin polling docker
 func (c *Collector) Start() {
 	c.updateServices()
 
@@ -41,6 +43,7 @@ func (c *Collector) Start() {
 	}
 }
 
+// NewCollector returns a new instance of the collector
 func NewCollector(pollInterval int, redis string) Collector {
 	cache := cache.NewCache(redis)
 	return Collector{pollInterval: time.Duration(pollInterval), cache: cache}

@@ -11,10 +11,12 @@ import (
 	"github.com/tpbowden/swarm-ingress-router/service"
 )
 
+// Router holds the current routing table
 type Router struct {
 	routes map[string]service.Service
 }
 
+// RouteToService returns the correct HTTP handler for a given service's DNS name
 func (r *Router) RouteToService(address string, secure bool) (http.Handler, bool) {
 	var handler http.Handler
 
@@ -42,6 +44,7 @@ func (r *Router) RouteToService(address string, secure bool) (http.Handler, bool
 	return NewRedirectHandler(redirectAddress, 301), true
 }
 
+// CertificateForService returns the certificate for a service (if one exists)
 func (r *Router) CertificateForService(address string) (*tls.Certificate, bool) {
 	var cert *tls.Certificate
 
@@ -60,6 +63,7 @@ func (r *Router) CertificateForService(address string) (*tls.Certificate, bool) 
 	return &certificate, true
 }
 
+// UpdateTable is an atomic operation to update the routing table
 func (r *Router) UpdateTable(services []service.Service) {
 	newTable := make(map[string]service.Service)
 
@@ -71,6 +75,7 @@ func (r *Router) UpdateTable(services []service.Service) {
 	r.routes = newTable
 }
 
+// NewRouter returns a new instance of the router
 func NewRouter() *Router {
 	return &Router{}
 }

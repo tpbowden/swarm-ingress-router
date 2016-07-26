@@ -4,9 +4,8 @@ import (
 	"crypto/tls"
 	"fmt"
 	"log"
-	"net/http"
-	"net/http/httputil"
-	"net/url"
+
+	"github.com/valyala/fasthttp"
 
 	"github.com/tpbowden/swarm-ingress-router/service"
 )
@@ -17,8 +16,8 @@ type Router struct {
 }
 
 // RouteToService returns the correct HTTP handler for a given service's DNS name
-func (r *Router) RouteToService(address string, secure bool) (http.Handler, bool) {
-	var handler http.Handler
+func (r *Router) RouteToService(address string, secure bool) (fasthttp.RequestHandler, bool) {
+	var handler fasthttp.RequestHandler
 
 	route, ok := r.routes[address]
 	if !ok {
@@ -30,14 +29,8 @@ func (r *Router) RouteToService(address string, secure bool) (http.Handler, bool
 		return handler, false
 	}
 
-	serviceURL, err := url.Parse(route.URL)
-	if err != nil {
-		log.Printf("Failed to parse URL for service %s", address)
-		return handler, false
-	}
-
 	if secure || !route.ForceTLS {
-		return http.Handler(httputil.NewSingleHostReverseProxy(serviceURL)), true
+		return NewProxyHandler(route.URL), true
 	}
 
 	redirectAddress := fmt.Sprintf("https://%s", address)

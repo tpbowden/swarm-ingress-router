@@ -1,7 +1,7 @@
 package router
 
 import (
-	"net/http"
+	"github.com/valyala/fasthttp"
 )
 
 // RedirectHandler stores the URL and HTTP code of a redirect
@@ -11,11 +11,12 @@ type RedirectHandler struct {
 }
 
 // ServerHTTP writes a redirect to an HTTP response
-func (r *RedirectHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	http.Redirect(w, req, r.url, r.code)
+func (r *RedirectHandler) ServeHTTP(ctx *fasthttp.RequestCtx) {
+	ctx.Redirect(r.url, r.code)
 }
 
 // NewRedirectHandler returns a new redirect handler
-func NewRedirectHandler(url string, code int) http.Handler {
-	return http.Handler(&RedirectHandler{url: url, code: code})
+func NewRedirectHandler(url string, code int) fasthttp.RequestHandler {
+	handler := RedirectHandler{url: url, code: code}
+	return fasthttp.RequestHandler(handler.ServeHTTP)
 }

@@ -10,10 +10,7 @@ import:
   subpackages:
   - context
 - package: github.com/urfave/cli
-  version: ~1.18.0
 - package: github.com/garyburd/redigo
-  version: ~1.0.0
   subpackages:
   - redis
 - package: github.com/valyala/fasthttp
-  version: ~20160617.0.0

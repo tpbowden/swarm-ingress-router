@@ -2,7 +2,6 @@ package router
 
 import (
 	"io/ioutil"
-	"net/http/httputil"
 	"testing"
 
 	"github.com/tpbowden/swarm-ingress-router/service"
@@ -55,16 +54,6 @@ var routerTests = []RouterTest{
 		services:    []service.Service{},
 	},
 	{
-		description: "A service with an invalid URL does not return successfully",
-		host:        "example.local",
-		services: []service.Service{
-			{
-				URL:     "http://[::1]a:3000",
-				DNSName: "example.local",
-			},
-		},
-	},
-	{
 		description: "An insecure connection with forceTLS returns a redirect",
 		host:        "example.local",
 		success:     true,
@@ -84,24 +73,10 @@ func TestRouting(t *testing.T) {
 		subject := NewRouter()
 		subject.UpdateTable(test.services)
 
-		result, ok := subject.RouteToService(test.host, test.secure)
+		_, ok := subject.RouteToService(test.host, test.secure)
 
 		if ok != test.success {
 			t.Errorf("Test failed: service fetching did not match: %s", test.description)
-		}
-
-		if test.redirect {
-			_, assertOk := result.(*RedirectHandler)
-			if !assertOk {
-				t.Errorf("Test failed: expected a redirect: %s", test.description)
-			}
-		}
-
-		if test.proxy {
-			_, assertOk := result.(*httputil.ReverseProxy)
-			if !assertOk {
-				t.Errorf("Test failed: expected a reverse proxy: %s", test.description)
-			}
 		}
 	}
 }

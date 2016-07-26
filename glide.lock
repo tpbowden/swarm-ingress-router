@@ -1,5 +1,5 @@
-hash: 827200cb79589cd4104391a8744c8b5dc78ce61fc129e605decd42d1a2c55bba
-updated: 2016-07-26T18:00:59.60733329+01:00
+hash: e518aeb3404732723a70441842bf12733425172ba44cc56b02ca438dee00d57c
+updated: 2016-07-26T18:15:45.990398172+01:00
 imports:
 - name: github.com/docker/distribution
   version: 4abae2ae560ba91db98779db2739eb97d7592fba
@@ -32,10 +32,20 @@ imports:
 - name: github.com/docker/go-units
   version: f2d77a61e3c169b43402a0a1e84f06daf29b8190
 - name: github.com/garyburd/redigo
-  version: 8873b2f1995f59d4bcdd2b0dc9858e2cb9bf0c13
+  version: b8dc90050f24c1a73a52f107f3f575be67b21b7c
   subpackages:
   - redis
   - internal
+- name: github.com/klauspost/compress
+  version: 14eb9c4951195779ecfbec34431a976de7335b0a
+  subpackages:
+  - flate
+  - gzip
+  - zlib
+- name: github.com/klauspost/cpuid
+  version: 09cded8978dc9e80714c4d85b0322337b0a1e5e0
+- name: github.com/klauspost/crc32
+  version: 19b0b332c9e4516a6370a0456e6182c3b5036720
 - name: github.com/Microsoft/go-winio
   version: ce2922f643c8fd76b46cadc7f404a06282678b34
 - name: github.com/opencontainers/runc
@@ -47,9 +57,13 @@ imports:
   subpackages:
   - formatters/logstash
 - name: github.com/urfave/cli
-  version: 1efa31f08b9333f1bd4882d61f9d668a70cd902e
+  version: d9021faab69f92295ef7061bd39e4a76dcbdef32
+- name: github.com/valyala/bytebufferpool
+  version: 8ebd0474e5a2f0a5c7a74ad2bf421a1d1a90264f
 - name: github.com/valyala/fasthttp
-  version: d42167fd04f636e20b005e9934159e95454233c7
+  version: 45697fe30a130ec6a54426a069c82f3abe76b63d
+  subpackages:
+  - fasthttputil
 - name: golang.org/x/net
   version: 4876518f9e71663000c348837735820161a42df7
   subpackages:

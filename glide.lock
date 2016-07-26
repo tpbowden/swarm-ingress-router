@@ -1,13 +1,13 @@
-hash: 762c331c0c86d7644b12b3004dcdc6de7283081262d178afb75be23df8fcb7da
-updated: 2016-07-25T09:18:31.72479288+01:00
+hash: 827200cb79589cd4104391a8744c8b5dc78ce61fc129e605decd42d1a2c55bba
+updated: 2016-07-26T18:00:59.60733329+01:00
 imports:
 - name: github.com/docker/distribution
-  version: 4e17ab5d319ac5b70b2769442947567a83386fbc
+  version: 4abae2ae560ba91db98779db2739eb97d7592fba
   subpackages:
   - reference
   - digest
 - name: github.com/docker/engine-api
-  version: 98348ad6f9c89bb10f31ac32cd1b12cbadd292b6
+  version: a52656d77f09d394104c1639824eada038bfdb89
   subpackages:
   - client
   - types
@@ -32,14 +32,14 @@ imports:
 - name: github.com/docker/go-units
   version: f2d77a61e3c169b43402a0a1e84f06daf29b8190
 - name: github.com/garyburd/redigo
-  version: b8dc90050f24c1a73a52f107f3f575be67b21b7c
+  version: 8873b2f1995f59d4bcdd2b0dc9858e2cb9bf0c13
   subpackages:
   - redis
   - internal
 - name: github.com/Microsoft/go-winio
   version: ce2922f643c8fd76b46cadc7f404a06282678b34
 - name: github.com/opencontainers/runc
-  version: 9d7831e41d3ef428b67685eeb27f2b4a22a92391
+  version: 522674998576b3aefdde233ffab20f763b83ac19
   subpackages:
   - libcontainer/user
 - name: github.com/Sirupsen/logrus
@@ -48,13 +48,15 @@ imports:
   - formatters/logstash
 - name: github.com/urfave/cli
   version: 1efa31f08b9333f1bd4882d61f9d668a70cd902e
+- name: github.com/valyala/fasthttp
+  version: d42167fd04f636e20b005e9934159e95454233c7
 - name: golang.org/x/net
   version: 4876518f9e71663000c348837735820161a42df7
   subpackages:
   - context
   - proxy
 - name: golang.org/x/sys
-  version: a408501be4d17ee978c04a618e7a1b22af058c0e
+  version: a646d33e2ee3172a661fc09bca23bb4889a41bc8
   subpackages:
   - windows
 testImports: []

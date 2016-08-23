@@ -14,12 +14,8 @@ import (
 	"github.com/tpbowden/swarm-ingress-router/cache"
 	"github.com/tpbowden/swarm-ingress-router/router"
 	"github.com/tpbowden/swarm-ingress-router/service"
+	"github.com/tpbowden/swarm-ingress-router/types"
 )
-
-// Startable is anything which can be started and will block until stopped
-type Startable interface {
-	Start()
-}
 
 // Server holds all state for routing to services
 type Server struct {
@@ -105,8 +101,8 @@ func (s *Server) Start() {
 }
 
 // NewServer returns a new instrance of the server
-func NewServer(bind, redis string) Startable {
+func NewServer(bind, redis string) types.Startable {
 	router := router.NewRouter()
 	cache := cache.NewCache(redis)
-	return Startable(&Server{bindAddress: bind, router: router, cache: cache})
+	return types.Startable(&Server{bindAddress: bind, router: router, cache: cache})
 }

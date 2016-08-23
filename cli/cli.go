@@ -5,11 +5,17 @@ import (
 
 	"github.com/tpbowden/swarm-ingress-router/collector"
 	"github.com/tpbowden/swarm-ingress-router/server"
+	"github.com/tpbowden/swarm-ingress-router/types"
 	"github.com/tpbowden/swarm-ingress-router/version"
 )
 
+type CLI struct {
+	newServer    func(string, string) types.Startable
+	newCollector func(int, string) types.Startable
+}
+
 // Start initializes the application as a command line app
-func Start(args []string, serverInit func(string, string) server.Startable) {
+func (c *CLI) Start(args []string) {
 	app := cli.NewApp()
 
 	app.Commands = []cli.Command{
@@ -23,8 +29,8 @@ func Start(args []string, serverInit func(string, string) server.Startable) {
 					Usage: "Poll interval in `seconds`",
 				},
 			},
-			Action: func(c *cli.Context) error {
-				collector := collector.NewCollector(c.Int("interval"), c.GlobalString("redis"))
+			Action: func(ctx *cli.Context) error {
+				collector := c.newCollector(ctx.Int("interval"), ctx.GlobalString("redis"))
 				collector.Start()
 				return nil
 			},
@@ -39,8 +45,8 @@ func Start(args []string, serverInit func(string, string) server.Startable) {
 					Usage: "Bind to `address`",
 				},
 			},
-			Action: func(c *cli.Context) error {
-				server := serverInit(c.String("bind"), c.GlobalString("redis"))
+			Action: func(ctx *cli.Context) error {
+				server := c.newServer(ctx.String("bind"), ctx.GlobalString("redis"))
 				server.Start()
 				return nil
 			},
@@ -60,4 +66,8 @@ func Start(args []string, serverInit func(string, string) server.Startable) {
 	app.Version = version.Version.String()
 
 	app.Run(args)
+}
+
+func NewCLI() CLI {
+	return CLI{newServer: server.NewServer, newCollector: collector.NewCollector}
 }

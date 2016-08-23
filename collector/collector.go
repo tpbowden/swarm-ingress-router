@@ -8,6 +8,7 @@ import (
 	"github.com/tpbowden/swarm-ingress-router/cache"
 	"github.com/tpbowden/swarm-ingress-router/docker"
 	"github.com/tpbowden/swarm-ingress-router/service"
+	"github.com/tpbowden/swarm-ingress-router/types"
 )
 
 // Collector holds all state for the sollector
@@ -44,7 +45,7 @@ func (c *Collector) Start() {
 }
 
 // NewCollector returns a new instance of the collector
-func NewCollector(pollInterval int, redis string) Collector {
+func NewCollector(pollInterval int, redis string) types.Startable {
 	cache := cache.NewCache(redis)
-	return Collector{pollInterval: time.Duration(pollInterval), cache: cache}
+	return types.Startable(&Collector{pollInterval: time.Duration(pollInterval), cache: cache})
 }

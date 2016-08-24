@@ -78,7 +78,8 @@ var loadServicesTests = []LoadServicesTest{
 func TestLoadingServices(t *testing.T) {
 	for _, test := range loadServicesTests {
 		client := FakeClient{services: test.services}
-		result := LoadAll(client)
+		subject := DockerPuller{client: client}
+		result := subject.LoadAll()
 
 		if !(len(result) == len(test.expected)) {
 			t.Errorf("Failed: %s", test.description)

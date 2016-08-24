@@ -6,21 +6,20 @@ import (
 	"time"
 
 	"github.com/tpbowden/swarm-ingress-router/cache"
-	"github.com/tpbowden/swarm-ingress-router/docker"
 	"github.com/tpbowden/swarm-ingress-router/service"
 	"github.com/tpbowden/swarm-ingress-router/types"
 )
 
 // Collector holds all state for the sollector
 type Collector struct {
-	pollInterval time.Duration
-	cache        cache.Cache
+	pollInterval  time.Duration
+	cache         cache.Cache
+	servicePuller service.Puller
 }
 
 func (c *Collector) updateServices() {
 	log.Print("Updating routes")
-	client := docker.NewClient()
-	services := service.LoadAll(client)
+	services := c.servicePuller.LoadAll()
 
 	json, err := json.Marshal(services)
 
@@ -32,7 +31,6 @@ func (c *Collector) updateServices() {
 	if cacheError := c.cache.Set("services", string(json)); cacheError != nil {
 		log.Printf("Failed to store services in cache: %v", cacheError)
 	}
-
 }
 
 // Start causes the collector to begin polling docker
@@ -46,6 +44,11 @@ func (c *Collector) Start() {
 
 // NewCollector returns a new instance of the collector
 func NewCollector(pollInterval int, redis string) types.Startable {
-	cache := cache.NewCache(redis)
-	return types.Startable(&Collector{pollInterval: time.Duration(pollInterval), cache: cache})
+	collector := &Collector{
+		pollInterval:  time.Duration(pollInterval),
+		cache:         cache.NewCache(redis),
+		servicePuller: service.NewPuller(),
+	}
+
+	return types.Startable(collector)
 }

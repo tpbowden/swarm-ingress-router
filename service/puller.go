@@ -9,11 +9,19 @@ import (
 	"github.com/tpbowden/swarm-ingress-router/docker"
 )
 
+type Puller interface {
+	LoadAll() []Service
+}
+
+type DockerPuller struct {
+	client docker.Client
+}
+
 // LoadAll queries docker for its service and parses the ones with correct labels
-func LoadAll(client docker.ServicePuller) []Service {
+func (p *DockerPuller) LoadAll() []Service {
 	filters := map[string]string{"label": "ingress=true"}
 
-	services := client.GetServices(filters)
+	services := p.client.GetServices(filters)
 	return parseServices(services)
 }
 
@@ -47,4 +55,9 @@ func parseServices(services []swarm.Service) []Service {
 	}
 
 	return serviceList
+}
+
+func NewPuller() Puller {
+	client := docker.NewClient()
+	return Puller(&DockerPuller{client: client})
 }

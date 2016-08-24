@@ -7,13 +7,19 @@ import (
 	"github.com/garyburd/redigo/redis"
 )
 
-// Cache holds the connection pool for an instance of the cache
-type Cache struct {
+type Cache interface {
+	Set(string, string) error
+	Get(string) ([]byte, error)
+	Subscribe(string, func()) error
+}
+
+// RedisCache holds the connection pool for an instance of the cache
+type RedisCache struct {
 	pool *redis.Pool
 }
 
 // Set sets a key to a value
-func (c *Cache) Set(key, value string) error {
+func (c *RedisCache) Set(key, value string) error {
 	conn := c.pool.Get()
 	defer conn.Close()
 
@@ -25,7 +31,7 @@ func (c *Cache) Set(key, value string) error {
 }
 
 // Subscribe subscribes to a key and calls a function when messages are received
-func (c *Cache) Subscribe(channel string, action func()) error {
+func (c *RedisCache) Subscribe(channel string, action func()) error {
 	conn := c.pool.Get()
 	defer conn.Close()
 
@@ -43,7 +49,7 @@ func (c *Cache) Subscribe(channel string, action func()) error {
 }
 
 // Get retrieves a key from redis
-func (c *Cache) Get(key string) ([]byte, error) {
+func (c *RedisCache) Get(key string) ([]byte, error) {
 	var s []byte
 
 	conn := c.pool.Get()
@@ -76,5 +82,5 @@ func NewCache(address string) Cache {
 		},
 	}
 
-	return Cache{pool: pool}
+	return Cache(&RedisCache{pool: pool})
 }

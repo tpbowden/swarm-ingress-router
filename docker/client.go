@@ -10,19 +10,19 @@ import (
 	"golang.org/x/net/context"
 )
 
-// ServicePuller takes labels and returns matching docker services
-type ServicePuller interface {
-	GetServices(map[string]string) []swarm.Service
-}
-
-// Client holds the configration needed for a connection to Docker's API
-type Client struct {
+// HTTPClient holds the configration needed for a connection to Docker's API
+type HTTPClient struct {
 	socket     string
 	apiVersion string
 }
 
+// Client takes labels and returns matching docker services
+type Client interface {
+	GetServices(map[string]string) []swarm.Service
+}
+
 // GetServices returns all Docker services mathcing the labels giben
-func (c Client) GetServices(filterList map[string]string) []swarm.Service {
+func (c HTTPClient) GetServices(filterList map[string]string) []swarm.Service {
 	defaultHeaders := map[string]string{"User-Agent": "engine-api-cli-1.0"}
 	cli, err := client.NewClient("unix:///var/run/docker.sock", "v1.24", nil, defaultHeaders)
 	defer func() {
@@ -50,7 +50,10 @@ func (c Client) GetServices(filterList map[string]string) []swarm.Service {
 	return services
 }
 
-// NewClient returns a new instance of the client
-func NewClient() ServicePuller {
-	return ServicePuller(Client{socket: "unix:///var/run/docker.sock", apiVersion: "v1.24"})
+// NewClient returns a new instance of the HTTP client
+func NewClient() Client {
+	return Client(HTTPClient{
+		socket:     "unix:///var/run/docker.sock",
+		apiVersion: "v1.24",
+	})
 }

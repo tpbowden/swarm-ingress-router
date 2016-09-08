@@ -11,7 +11,7 @@ var key, keyErr = ioutil.ReadFile("../fixtures/key.key")
 func TestServiceURL(t *testing.T) {
 	s := NewService("foo", 8080, "bar", false, false, "", "")
 	url := s.URL
-	expected := "http://foo:8080"
+	expected := "foo:8080"
 
 	if url != expected {
 		t.Errorf("Expected %s, got %s", expected, url)

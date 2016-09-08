@@ -4,10 +4,6 @@ Route DNS names to labelled Swarm services using Docker 1.12's internal service 
 
 [![Build Status](https://travis-ci.org/tpbowden/swarm-ingress-router.svg?branch=master)](https://travis-ci.org/tpbowden/swarm-ingress-router) [![Go Report Card](https://goreportcard.com/badge/github.com/tpbowden/swarm-ingress-router)](https://goreportcard.com/report/github.com/tpbowden/swarm-ingress-router)
 
-WARNING: This application depends on features in Docker's currently experimental realease 1.12. There are still
-serveral bugs which can cause things to break, especially related to container IP address management across multiple
-Swarm hosts.
-
 ## Features
 
 * No external load balancer or config files needed making for easy deployments

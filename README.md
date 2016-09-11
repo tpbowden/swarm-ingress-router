@@ -79,3 +79,4 @@ as the router.
 * Command line argument for log level
 * Use Docker events to stay in sync and long polling as a fallback
 * Create a docker-compose file which can be converted into a stack
+* Add a heathcheck endpoint and use Docker's HEALTHCHECK instruction to ensure maximum uptime

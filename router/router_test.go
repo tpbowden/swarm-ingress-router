@@ -29,7 +29,21 @@ var routerTests = []RouterTest{
 		services: []service.Service{
 			{
 				URL:      "http://my-service:3000",
-				DNSName:  "example.local",
+				DNSNames: []string{"example.local"},
+				Secure:   false,
+				ForceTLS: false,
+			},
+		},
+	},
+	{
+		description: "Creating multiple DNS names for a service",
+		host:        "example.com",
+		success:     true,
+		proxy:       true,
+		services: []service.Service{
+			{
+				URL:      "http://my-service:3000",
+				DNSNames: []string{"example.local", "example.com"},
 				Secure:   false,
 				ForceTLS: false,
 			},
@@ -42,9 +56,9 @@ var routerTests = []RouterTest{
 		secure:      true,
 		services: []service.Service{
 			{
-				URL:     "http://my-service:3000",
-				DNSName: "example.local",
-				Secure:  false,
+				URL:      "http://my-service:3000",
+				DNSNames: []string{"example.local"},
+				Secure:   false,
 			},
 		},
 	},
@@ -61,7 +75,7 @@ var routerTests = []RouterTest{
 		services: []service.Service{
 			{
 				URL:      "http://my-service:3000",
-				DNSName:  "example.local",
+				DNSNames: []string{"example.local"},
 				ForceTLS: true,
 			},
 		},
@@ -93,9 +107,9 @@ var certificateTests = []CertificateTest{
 		description: "Missing services do not return successfully",
 		services: []service.Service{
 			{
-				URL:     "http://my-service:3000",
-				DNSName: "example.local",
-				Secure:  false,
+				URL:      "http://my-service:3000",
+				DNSNames: []string{"example.local"},
+				Secure:   false,
 			},
 		},
 		host:    "foo.local",
@@ -106,7 +120,7 @@ var certificateTests = []CertificateTest{
 		services: []service.Service{
 			{
 				URL:         "http://my-service:3000",
-				DNSName:     "example.local",
+				DNSNames:    []string{"example.local"},
 				Secure:      true,
 				EncodedCert: string(certificate),
 				EncodedKey:  string(key),

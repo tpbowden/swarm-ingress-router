@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"log"
+	"strings"
 )
 
 // Service holds all metdata required to router to a Docker service
@@ -30,7 +31,7 @@ func (s *Service) ParseCertificate() bool {
 
 	parsedCert, err := tls.X509KeyPair([]byte(s.EncodedCert), []byte(s.EncodedKey))
 	if err != nil {
-		log.Printf("Failed to parse certificate for %s", s.DNSName)
+		log.Printf("Failed to parse certificate for %s", s.DNSNames)
 		return false
 	}
 
@@ -43,7 +44,7 @@ func NewService(name string, port int, dnsName string, secure bool, forceTLS boo
 	url := fmt.Sprintf("%s:%d", name, port)
 	return Service{
 		URL:         url,
-		DNSName:     dnsName,
+		DNSNames:    strings.Split(dnsName, ","),
 		Secure:      secure,
 		ForceTLS:    forceTLS,
 		EncodedCert: encodedCert,

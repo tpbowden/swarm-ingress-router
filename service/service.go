@@ -9,7 +9,7 @@ import (
 // Service holds all metdata required to router to a Docker service
 type Service struct {
 	URL         string
-	DNSName     string
+	DNSNames    []string
 	Secure      bool
 	ForceTLS    bool
 	EncodedCert string

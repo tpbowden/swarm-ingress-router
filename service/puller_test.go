@@ -29,7 +29,7 @@ var loadServicesTests = []LoadServicesTest{
 		expected: []Service{
 			{
 				URL:         "myservice:8080",
-				DNSName:     "example.com",
+				DNSNames:    []string{"example.com"},
 				Secure:      true,
 				ForceTLS:    true,
 				EncodedCert: "a cert",
@@ -45,6 +45,38 @@ var loadServicesTests = []LoadServicesTest{
 						Labels: map[string]string{
 							"ingress.targetport": "8080",
 							"ingress.dnsname":    "example.com",
+							"ingress.tls":        "true",
+							"ingress.forcetls":   "true",
+							"ingress.cert":       "a cert",
+							"ingress.key":        "a key",
+						},
+					},
+				},
+			},
+		},
+	},
+	{
+		description: "Allows multiple DNS names",
+		resultCount: 1,
+		expected: []Service{
+			{
+				URL:         "myservice:8080",
+				DNSNames:    []string{"example.com", "example.org"},
+				Secure:      true,
+				ForceTLS:    true,
+				EncodedCert: "a cert",
+				EncodedKey:  "a key",
+			},
+		},
+		services: []swarm.Service{
+			{
+				ID: "123",
+				Spec: swarm.ServiceSpec{
+					Annotations: swarm.Annotations{
+						Name: "myservice",
+						Labels: map[string]string{
+							"ingress.targetport": "8080",
+							"ingress.dnsname":    "example.com,example.org",
 							"ingress.tls":        "true",
 							"ingress.forcetls":   "true",
 							"ingress.cert":       "a cert",

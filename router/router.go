@@ -12,7 +12,7 @@ import (
 
 // Router holds the current routing table
 type Router struct {
-	routes map[string]*service.Service
+	routes map[string]service.Service
 }
 
 // RouteToService returns the correct HTTP handler for a given service's DNS name
@@ -54,14 +54,12 @@ func (r *Router) CertificateForService(address string) (*tls.Certificate, bool) 
 
 // UpdateTable is an atomic operation to update the routing table
 func (r *Router) UpdateTable(services []service.Service) {
-	newTable := make(map[string]*service.Service)
+	newTable := make(map[string]service.Service)
 
 	for _, s := range services {
+		log.Printf("Registering service for %s", s.DNSName)
 		s.ParseCertificate()
-		for _, dnsName := range s.DNSNames {
-			log.Printf("Registering service for %s", dnsName)
-			newTable[dnsName] = &s
-		}
+		newTable[s.DNSName] = s
 	}
 
 	r.routes = newTable

@@ -57,7 +57,7 @@ routed to the service.
 In order for the router to pick up a service, the service must have the following labels:
 
 * `ingress=true`
-* `ingress.dnsname=<your service's external DNS names, separated by commas>`
+* `ingress.dnsname=<your service's external DNS name>`
 * `ingress.targetport=<your service's externally-facing port>`
 
 For TLS you need the following lables:

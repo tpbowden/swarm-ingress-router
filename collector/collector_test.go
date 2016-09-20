@@ -17,7 +17,7 @@ type FakePuller struct {
 func (p *FakePuller) LoadAll() []service.Service {
 	return []service.Service{
 		{
-			DNSNames: []string{"example.com"},
+			DNSName: "example.com",
 		},
 	}
 }
@@ -46,7 +46,7 @@ func TestUpdatingServices(t *testing.T) {
 		t.Error("Expected cache key to equal services, got %s", fakeCache.key)
 	}
 
-	expected := "[{\"URL\":\"\",\"DNSNames\":[\"example.com\"],\"Secure\":false,\"ForceTLS\":false,\"EncodedCert\":\"\",\"EncodedKey\":\"\"}]"
+	expected := "[{\"URL\":\"\",\"DNSName\":\"example.com\",\"Secure\":false,\"ForceTLS\":false,\"EncodedCert\":\"\",\"EncodedKey\":\"\"}]"
 	actual := fakeCache.data
 
 	if expected != actual {

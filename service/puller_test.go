@@ -16,7 +16,7 @@ func (f FakeClient) GetServices(filters map[string]string) []swarm.Service {
 }
 
 type LoadServicesTest struct {
-	expected    []Service
+	expected    []*Service
 	description string
 	resultCount int
 	services    []swarm.Service
@@ -26,7 +26,7 @@ var loadServicesTests = []LoadServicesTest{
 	{
 		description: "It parses and returns valid services",
 		resultCount: 1,
-		expected: []Service{
+		expected: []*Service{
 			{
 				URL:         "myservice:8080",
 				DNSNames:    []string{"example.com"},
@@ -58,7 +58,7 @@ var loadServicesTests = []LoadServicesTest{
 	{
 		description: "Allows multiple DNS names",
 		resultCount: 1,
-		expected: []Service{
+		expected: []*Service{
 			{
 				URL:         "myservice:8080",
 				DNSNames:    []string{"example.com", "example.org"},
@@ -89,7 +89,7 @@ var loadServicesTests = []LoadServicesTest{
 	},
 	{
 		description: "Discards services with an invalid port",
-		expected:    []Service{},
+		expected:    []*Service{},
 		services: []swarm.Service{
 			{
 				ID: "123",

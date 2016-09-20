@@ -14,8 +14,8 @@ type FakeCache struct {
 type FakePuller struct {
 }
 
-func (p *FakePuller) LoadAll() []service.Service {
-	return []service.Service{
+func (p *FakePuller) LoadAll() []*service.Service {
+	return []*service.Service{
 		{
 			DNSNames: []string{"example.com"},
 		},

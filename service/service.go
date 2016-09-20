@@ -40,9 +40,9 @@ func (s *Service) ParseCertificate() bool {
 }
 
 // NewService returns a new service instance
-func NewService(name string, port int, dnsName string, secure bool, forceTLS bool, encodedCert string, encodedKey string) Service {
+func NewService(name string, port int, dnsName string, secure bool, forceTLS bool, encodedCert string, encodedKey string) *Service {
 	url := fmt.Sprintf("%s:%d", name, port)
-	return Service{
+	return &Service{
 		URL:         url,
 		DNSNames:    strings.Split(dnsName, ","),
 		Secure:      secure,

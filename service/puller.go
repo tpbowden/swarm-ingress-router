@@ -10,7 +10,7 @@ import (
 )
 
 type Puller interface {
-	LoadAll() []Service
+	LoadAll() []*Service
 }
 
 type DockerPuller struct {
@@ -18,18 +18,18 @@ type DockerPuller struct {
 }
 
 // LoadAll queries docker for its service and parses the ones with correct labels
-func (p *DockerPuller) LoadAll() []Service {
+func (p *DockerPuller) LoadAll() []*Service {
 	filters := map[string]string{"label": "ingress=true"}
 
 	services := p.client.GetServices(filters)
 	return parseServices(services)
 }
 
-func parseServices(services []swarm.Service) []Service {
-	var serviceList []Service
+func parseServices(services []swarm.Service) []*Service {
+	var serviceList []*Service
 
 	for _, s := range services {
-		var parsedService Service
+		var parsedService *Service
 
 		port, err := strconv.Atoi(s.Spec.Annotations.Labels["ingress.targetport"])
 		if err != nil {

@@ -5,7 +5,7 @@ import (
 )
 
 // Version is the application's current version
-var Version = newVersionNumber(0, 2, 0)
+var Version = newVersionNumber(0, 3, 0)
 
 type semverNumber struct {
 	major int

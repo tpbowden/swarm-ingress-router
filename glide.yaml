@@ -1,11 +1,12 @@
 package: github.com/tpbowden/swarm-ingress-router
 import:
-- package: github.com/docker/engine-api
+- package: github.com/pkg/errors
+- package: github.com/docker/docker
   subpackages:
   - client
-  - types
-  - types/filters
-  - types/swarm
+  - api/types
+  - api/types/filters
+  - api/types/swarm
 - package: golang.org/x/net
   subpackages:
   - context

@@ -4,7 +4,7 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/docker/engine-api/types/swarm"
+	"github.com/docker/docker/api/types/swarm"
 
 	"github.com/tpbowden/swarm-ingress-router/docker"
 )

@@ -1,41 +1,46 @@
-hash: e518aeb3404732723a70441842bf12733425172ba44cc56b02ca438dee00d57c
-updated: 2016-07-26T18:15:45.990398172+01:00
+hash: f0f6ff8384c5b7c5fd34490510da4a4845ef4d26594b0f0084cac7eb4ce4dea6
+updated: 2016-10-11T15:30:10.471705329+01:00
 imports:
 - name: github.com/docker/distribution
   version: 4abae2ae560ba91db98779db2739eb97d7592fba
   subpackages:
-  - reference
   - digest
+  - reference
+- name: github.com/docker/docker
+  version: 45d346291463a594090b96b28d110539f2d66502
+  subpackages:
+  - api/types
+  - api/types/blkiodev
+  - api/types/container
+  - api/types/events
+  - api/types/filters
+  - api/types/mount
+  - api/types/network
+  - api/types/reference
+  - api/types/registry
+  - api/types/strslice
+  - api/types/swarm
+  - api/types/time
+  - api/types/versions
+  - client
+  - pkg/tlsconfig
 - name: github.com/docker/engine-api
   version: a52656d77f09d394104c1639824eada038bfdb89
   subpackages:
-  - client
-  - types
-  - types/filters
   - types/swarm
-  - client/transport
-  - client/transport/cancellable
-  - types/container
-  - types/network
-  - types/reference
-  - types/registry
-  - types/time
-  - types/versions
-  - types/blkiodev
-  - types/strslice
 - name: github.com/docker/go-connections
   version: 990a1a1a70b0da4c4cb70e117971a4f0babfbf1a
   subpackages:
+  - nat
   - sockets
   - tlsconfig
-  - nat
 - name: github.com/docker/go-units
   version: f2d77a61e3c169b43402a0a1e84f06daf29b8190
 - name: github.com/garyburd/redigo
   version: b8dc90050f24c1a73a52f107f3f575be67b21b7c
   subpackages:
-  - redis
   - internal
+  - redis
 - name: github.com/klauspost/compress
   version: 14eb9c4951195779ecfbec34431a976de7335b0a
   subpackages:
@@ -52,6 +57,8 @@ imports:
   version: 522674998576b3aefdde233ffab20f763b83ac19
   subpackages:
   - libcontainer/user
+- name: github.com/pkg/errors
+  version: 839d9e913e063e28dfd0e6c7b7512793e0a48be9
 - name: github.com/Sirupsen/logrus
   version: 55eb11d21d2a31a3cc93838241d04800f52e823d
   subpackages:
@@ -68,6 +75,7 @@ imports:
   version: 4876518f9e71663000c348837735820161a42df7
   subpackages:
   - context
+  - context/ctxhttp
   - proxy
 - name: golang.org/x/sys
   version: a646d33e2ee3172a661fc09bca23bb4889a41bc8

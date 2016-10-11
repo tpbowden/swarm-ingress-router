@@ -3,10 +3,10 @@ package docker
 import (
 	"log"
 
-	"github.com/docker/engine-api/client"
-	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/filters"
-	"github.com/docker/engine-api/types/swarm"
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/filters"
+	"github.com/docker/docker/api/types/swarm"
+	"github.com/docker/docker/client"
 	"golang.org/x/net/context"
 )
 
@@ -22,7 +22,7 @@ type Client interface {
 }
 
 // GetServices returns all Docker services mathcing the labels giben
-func (c HTTPClient) GetServices(filterList map[string]string) []swarm.Service {
+func (c *HTTPClient) GetServices(filterList map[string]string) []swarm.Service {
 	defaultHeaders := map[string]string{"User-Agent": "engine-api-cli-1.0"}
 	cli, err := client.NewClient("unix:///var/run/docker.sock", "v1.24", nil, defaultHeaders)
 	defer func() {
@@ -52,7 +52,7 @@ func (c HTTPClient) GetServices(filterList map[string]string) []swarm.Service {
 
 // NewClient returns a new instance of the HTTP client
 func NewClient() Client {
-	return Client(HTTPClient{
+	return Client(&HTTPClient{
 		socket:     "unix:///var/run/docker.sock",
 		apiVersion: "v1.24",
 	})

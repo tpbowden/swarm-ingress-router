@@ -12,8 +12,7 @@ import (
 
 // HTTPClient holds the configration needed for a connection to Docker's API
 type HTTPClient struct {
-	socket     string
-	apiVersion string
+	cli *client.Client
 }
 
 // Client takes labels and returns matching docker services
@@ -23,25 +22,18 @@ type Client interface {
 
 // GetServices returns all Docker services mathcing the labels giben
 func (c *HTTPClient) GetServices(filterList map[string]string) []swarm.Service {
-	defaultHeaders := map[string]string{"User-Agent": "engine-api-cli-1.0"}
-	cli, err := client.NewClient("unix:///var/run/docker.sock", "v1.24", nil, defaultHeaders)
 	defer func() {
 		if r := recover(); r != nil {
 			log.Print("Failed to lookup services: ", r)
 		}
 	}()
 
-	if err != nil {
-		log.Print("Failed to lookup services: ", err)
-		return []swarm.Service{}
-	}
-
 	filter := filters.NewArgs()
 	for k, v := range filterList {
 		filter.Add(k, v)
 	}
 
-	services, err := cli.ServiceList(context.Background(), types.ServiceListOptions{Filter: filter})
+	services, err := c.cli.ServiceList(context.Background(), types.ServiceListOptions{Filter: filter})
 	if err != nil {
 		log.Print("Failed to lookup services: ", err)
 		return []swarm.Service{}
@@ -52,8 +44,14 @@ func (c *HTTPClient) GetServices(filterList map[string]string) []swarm.Service {
 
 // NewClient returns a new instance of the HTTP client
 func NewClient() Client {
+	defaultHeaders := map[string]string{"User-Agent": "engine-api-cli-1.0"}
+	cli, err := client.NewClient("unix:///var/run/docker.sock", "v1.24", nil, defaultHeaders)
+
+	if err != nil {
+		log.Panic("Failed to create Docker client: ", err)
+	}
+
 	return Client(&HTTPClient{
-		socket:     "unix:///var/run/docker.sock",
-		apiVersion: "v1.24",
+		cli: cli,
 	})
 }

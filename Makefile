@@ -30,12 +30,14 @@ release: build-image
 test:
 	@go test -cover `go list ./... | grep -v '/vendor/'`
 
-dev:
+dev-compile:
 	@docker build -t ingress-router-dev -f Dockerfile.build .
 	@docker run --name ingress-router-dev -it ingress-router-dev make compile
 	@docker cp ingress-router-dev:/go/src/github.com/tpbowden/swarm-ingress-router/swarm-ingress-router .
 	@docker rm ingress-router-dev
 	@docker rmi ingress-router-dev
+
+dev: dev-compile
 	@docker build -t swarm-ingress-router-dev:latest .
 	@docker swarm init
 	@docker network create --driver=overlay frontends
@@ -57,6 +59,7 @@ cleanup:
 	@docker swarm leave --force
 	@docker network rm frontends router-management
 	@docker rmi swarm-ingress-router-dev
+	@rm ./swarm-ingress-router
 
 reload: cleanup dev
 

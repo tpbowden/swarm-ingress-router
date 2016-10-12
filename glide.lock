@@ -24,10 +24,6 @@ imports:
   - api/types/versions
   - client
   - pkg/tlsconfig
-- name: github.com/docker/engine-api
-  version: a52656d77f09d394104c1639824eada038bfdb89
-  subpackages:
-  - types/swarm
 - name: github.com/docker/go-connections
   version: 990a1a1a70b0da4c4cb70e117971a4f0babfbf1a
   subpackages:

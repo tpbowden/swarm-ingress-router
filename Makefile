@@ -26,6 +26,7 @@ build-image: release-compile
 
 release: build-image
 	@docker push tpbowden/swarm-ingress-router:$(TAG)
+	@docker tag tpbowden/swarm-ingress-router:$(TAG) tpbowden/swarm-ingress-router:latest
 	@docker push tpbowden/swarm-ingress-router:latest
 
 release-dev: build-image

@@ -19,5 +19,5 @@ after_success:
     TAG="$TRAVIS_TAG" make release;
     fi
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
-    make release;
+    make release-dev;
     fi

@@ -1,6 +1,6 @@
 GOOS=linux
 GOARCH=amd64
-TAG?=latest
+TAG?=dev
 CERTIFICATE=`cat fixtures/cert.crt`
 KEY=`cat fixtures/key.key`
 
@@ -26,6 +26,10 @@ build-image: release-compile
 
 release: build-image
 	@docker push tpbowden/swarm-ingress-router:$(TAG)
+	@docker push tpbowden/swarm-ingress-router:latest
+
+release-dev: build-image
+	@docker push tpbowden/swarm-ingress-router:dev
 
 test:
 	@go test -cover `go list ./... | grep -v '/vendor/'`

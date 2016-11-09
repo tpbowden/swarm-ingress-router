@@ -10,7 +10,7 @@ import (
 )
 
 type CLI struct {
-	newServer    func(string, string) types.Startable
+	newServer    func(string, string, int) types.Startable
 	newCollector func(int, string) types.Startable
 }
 
@@ -44,9 +44,14 @@ func (c *CLI) Start(args []string) {
 					Value: "127.0.0.1",
 					Usage: "Bind to `address`",
 				},
+				cli.IntFlag{
+					Name:  "max-body-size",
+					Value: 4,
+					Usage: "Max body size in MB",
+				},
 			},
 			Action: func(ctx *cli.Context) error {
-				server := c.newServer(ctx.String("bind"), ctx.GlobalString("redis"))
+				server := c.newServer(ctx.String("bind"), ctx.GlobalString("redis"), ctx.Int("max-body-size")*1024*1024)
 				server.Start()
 				return nil
 			},

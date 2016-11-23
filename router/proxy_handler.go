@@ -20,6 +20,7 @@ func (r *ProxyHandler) ServeHTTP(ctx *fasthttp.RequestCtx) {
 	resp := &ctx.Response
 	if err := proxyClient.Do(req, resp); err != nil {
 		ctx.Logger().Printf("error when proxying the request: %s", err)
+		ctx.SetStatusCode(fasthttp.StatusServiceUnavailable)
 	}
 }
 

@@ -15,6 +15,7 @@ type TestServer struct {
 	bindAddress string
 	redis       string
 	maxBodySize int
+  readBufferSize int
 	started     bool
 }
 
@@ -32,10 +33,11 @@ func (c *TestCollector) Start() {
 	c.started = true
 }
 
-func newTestServer(bind, redis string, maxBodySize int) types.Startable {
+func newTestServer(bind, redis string, maxBodySize int, readBufferSize int) types.Startable {
 	fakeServer.bindAddress = bind
 	fakeServer.redis = redis
 	fakeServer.maxBodySize = maxBodySize
+  fakeServer.readBufferSize = readBufferSize
 	fakeServer.started = false
 	return types.Startable(fakeServer)
 }
@@ -48,7 +50,7 @@ func newTestCollector(interval int, redis string) types.Startable {
 }
 
 func TestStartingTheServerWithCLI(t *testing.T) {
-	args := []string{"cli", "-r", "redis-url", "server", "-b", "1.2.3.4", "--max-body-size", "412"}
+	args := []string{"cli", "-r", "redis-url", "server", "-b", "1.2.3.4", "--max-body-size", "412", "--read-buffer-size", "206"}
 	subject := CLI{newServer: newTestServer, newCollector: newTestCollector}
 	subject.Start(args)
 
@@ -68,6 +70,12 @@ func TestStartingTheServerWithCLI(t *testing.T) {
 	actualMaxBodySize := fakeServer.maxBodySize
 	if expectedMaxBodySize != actualMaxBodySize {
 		t.Errorf("Expected body size limit to equal %d, got %d", expectedMaxBodySize, actualMaxBodySize)
+	}
+
+  expectedReadBufferSize := 206 * 1024
+	actualReadBufferSize := fakeServer.readBufferSize
+	if expectedReadBufferSize != actualReadBufferSize {
+		t.Errorf("Expected read buffer size limit to equal %d, got %d", expectedReadBufferSize, actualReadBufferSize)
 	}
 
 	if !fakeServer.started {

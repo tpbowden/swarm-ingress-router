@@ -10,7 +10,7 @@ import (
 )
 
 type CLI struct {
-	newServer    func(string, string, int) types.Startable
+	newServer    func(string, string, int, int) types.Startable
 	newCollector func(int, string) types.Startable
 }
 
@@ -49,9 +49,22 @@ func (c *CLI) Start(args []string) {
 					Value: 4,
 					Usage: "Max body size in MB",
 				},
+        cli.IntFlag{
+          Name:  "read-buffer-size",
+          Value: 4,
+          Usage: "Per-connection size in KB",
+        },
 			},
 			Action: func(ctx *cli.Context) error {
-				server := c.newServer(ctx.String("bind"), ctx.GlobalString("redis"), ctx.Int("max-body-size")*1024*1024)
+        // Default read buffer size is currently 4096 (defaultReadBufferSize in
+        // fasthttp's server.go)
+        // Per-connection buffer size for requests' reading.
+        // This also limits the maximum header size.
+        //
+        // Increase this buffer if your clients send multi-KB RequestURIs
+        // and/or multi-KB headers (for example, BIG cookies, things like kerberos
+        // and others which use larger sizes than 4KB)
+				server := c.newServer(ctx.String("bind"), ctx.GlobalString("redis"), ctx.Int("max-body-size")*1024*1024, ctx.Int("read-buffer-size")*1024)
 				server.Start()
 				return nil
 			},

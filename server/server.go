@@ -104,8 +104,8 @@ func (s *Server) Start() {
 }
 
 // NewServer returns a new instrance of the server
-func NewServer(bind, redis string, maxBodySize int) types.Startable {
+func NewServer(bind, redis string, maxBodySize int, readBufferSize int) types.Startable {
 	router := router.NewRouter()
 	cache := cache.NewCache(redis)
-	return types.Startable(&Server{bindAddress: bind, maxBodySize: maxBodySize, readBufferSize: 8192, router: router, cache: cache})
+	return types.Startable(&Server{bindAddress: bind, maxBodySize: maxBodySize, readBufferSize: readBufferSize, router: router, cache: cache})
 }

@@ -21,6 +21,7 @@ import (
 type Server struct {
 	bindAddress string
 	maxBodySize int
+  readBufferSize int
 	cache       cache.Cache
 	router      *router.Router
 }
@@ -73,8 +74,7 @@ func (s *Server) startHTTPServer() {
 	bind := fmt.Sprintf("%s:8080", s.bindAddress)
 	log.Printf("Server listening for HTTP on http://%s", bind)
 	// http.ListenAndServe(bind, s)
-
-	server := &fasthttp.Server{Handler: s.ServeHTTP, MaxRequestBodySize: s.maxBodySize}
+	server := &fasthttp.Server{Handler: s.ServeHTTP, MaxRequestBodySize: s.maxBodySize, ReadBufferSize: s.readBufferSize}
 	server.ListenAndServe(bind)
 }
 
@@ -82,7 +82,7 @@ func (s *Server) startHTTPSServer() {
 	bind := fmt.Sprintf("%s:8443", s.bindAddress)
 	config := &tls.Config{GetCertificate: s.getCertificate}
 	listener, _ := tls.Listen("tcp", bind, config)
-	tlsServer := fasthttp.Server{Handler: s.ServeHTTP, MaxRequestBodySize: s.maxBodySize}
+	tlsServer := fasthttp.Server{Handler: s.ServeHTTP, MaxRequestBodySize: s.maxBodySize, ReadBufferSize: s.readBufferSize}
 
 	log.Printf("Server listening for HTTPS on https://%s", bind)
 	tlsServer.Serve(listener)
@@ -104,8 +104,8 @@ func (s *Server) Start() {
 }
 
 // NewServer returns a new instrance of the server
-func NewServer(bind, redis string, maxBodySize int) types.Startable {
+func NewServer(bind, redis string, maxBodySize int, readBufferSize int) types.Startable {
 	router := router.NewRouter()
 	cache := cache.NewCache(redis)
-	return types.Startable(&Server{bindAddress: bind, maxBodySize: maxBodySize, router: router, cache: cache})
+	return types.Startable(&Server{bindAddress: bind, maxBodySize: maxBodySize, readBufferSize: readBufferSize, router: router, cache: cache})
 }

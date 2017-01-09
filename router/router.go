@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/valyala/fasthttp"
 
@@ -47,9 +48,14 @@ func (r *Router) CertificateForService(address string) (*tls.Certificate, bool) 
 		return cert, false
 	}
 
-	certificate := route.Certificate()
+	if route.ParseCertificate(){
+		routeCert := route.Certificate()
+		cert = &routeCert
+	} else {
+		cert = getDefaultCertificate()
+	}
 
-	return &certificate, true
+	return cert, true
 }
 
 // UpdateTable is an atomic operation to update the routing table
@@ -63,6 +69,20 @@ func (r *Router) UpdateTable(services []service.Service) {
 	}
 
 	r.routes = newTable
+}
+
+func getDefaultCertificate() *tls.Certificate {
+	certData := os.Getenv("certData")
+	keyData := os.Getenv("keyData")
+	if certData != "" && keyData != "" {
+		parsedCert, err := tls.X509KeyPair([]byte(certData), []byte(keyData))
+		if err != nil {
+			log.Printf("Failed to parse router certificate")
+		} else {
+			return &parsedCert
+		}
+	}
+	return nil
 }
 
 // NewRouter returns a new instance of the router

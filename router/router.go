@@ -4,10 +4,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"log"
-	"os"
-
 	"github.com/valyala/fasthttp"
-
 	"github.com/tpbowden/swarm-ingress-router/service"
 )
 
@@ -39,23 +36,21 @@ func (r *Router) RouteToService(address string, secure bool) (fasthttp.RequestHa
 }
 
 // CertificateForService returns the certificate for a service (if one exists)
-func (r *Router) CertificateForService(address string) (*tls.Certificate, bool) {
-	var cert *tls.Certificate
-
+func (r *Router) CertificateForService(address, cert, key string) (*tls.Certificate, bool) {
 	route, ok := r.routes[address]
 	if !ok {
 		log.Printf("Failed to lookup service for %s", address)
-		return cert, false
+		return nil, false
 	}
 
 	if route.ParseCertificate(){
 		routeCert := route.Certificate()
-		cert = &routeCert
-	} else {
-		cert = getDefaultCertificate()
+		return &routeCert, true
+	} else if parsedCert := getDefaultCertificate(cert, key); parsedCert != nil {
+    return parsedCert, true
 	}
 
-	return cert, true
+	return nil, false
 }
 
 // UpdateTable is an atomic operation to update the routing table
@@ -71,11 +66,9 @@ func (r *Router) UpdateTable(services []service.Service) {
 	r.routes = newTable
 }
 
-func getDefaultCertificate() *tls.Certificate {
-	certData := os.Getenv("certData")
-	keyData := os.Getenv("keyData")
-	if certData != "" && keyData != "" {
-		parsedCert, err := tls.X509KeyPair([]byte(certData), []byte(keyData))
+func getDefaultCertificate(cert, key string) *tls.Certificate {
+	if cert != "" && key != "" {
+		parsedCert, err := tls.X509KeyPair([]byte(cert), []byte(key))
 		if err != nil {
 			log.Printf("Failed to parse router certificate")
 		} else {

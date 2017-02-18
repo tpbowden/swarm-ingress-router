@@ -10,6 +10,6 @@ type Configuration struct {
 	PollInterval time.Duration `default:"10s" split_words:"true"`
 }
 
-type Startable struct {
-	Start func(Configuration)
+type Startable interface {
+	Start()
 }

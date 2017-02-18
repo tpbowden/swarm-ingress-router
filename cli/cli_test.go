@@ -15,7 +15,7 @@ func TestDefaults(t *testing.T) {
 		PollInterval: 10 * time.Second,
 	}
 
-	_, config := GetConfig([]string{})
+	_, config := GetConfig([]string{"server"})
 	if config != defaultValues {
 		t.Errorf("Defaults did not match: expected %+v, got %+v", defaultValues, config)
 	}
@@ -33,7 +33,7 @@ func TestOverrides(t *testing.T) {
 	os.Setenv("INGRESS_BIND", "1.2.3.4")
 	os.Setenv("INGRESS_POLL_INTERVAL", "5m")
 
-	_, config := GetConfig([]string{})
+	_, config := GetConfig([]string{"server"})
 
 	if config != overriddenValues {
 		t.Errorf("Overrides did not match: expected %+v, got %+v", overriddenValues, config)

@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+  router-storage:
+    image: redis:3.2-alpine
+    networks:
+      - router-management
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  router-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: collector
+    networks:
+      - router-management
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+  router:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: server
+    ports:
+      - 80:8080
+      - 443:8443
+    networks:
+      - router-management
+      - frontends
+    deploy:
+      mode: global
+
+networks:
+  router-management:
+  frontends:

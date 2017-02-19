@@ -1,0 +1,19 @@
+FROM golang:1.8-alpine
+
+ENV CGO_ENABLED=0
+
+RUN apk add -U make git curl &&\
+    go get github.com/Masterminds/glide
+
+WORKDIR /go/src/github.com/tpbowden/swarm-ingress-router
+
+COPY glide.yaml glide.lock ./
+RUN glide install
+
+COPY . ./
+RUN go build -a -v .
+
+EXPOSE 8080 443
+
+ENTRYPOINT ["./swarm-ingress-router"]
+CMD ["server"]

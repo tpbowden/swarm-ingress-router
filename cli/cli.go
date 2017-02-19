@@ -20,7 +20,7 @@ const usage = "Please specify either 'server' or 'collector' as the first and on
 
 func (c CLI) GetConfig(args []string) types.Startable {
 	var app types.Startable
-	if len(args) != 1 {
+	if len(args) != 2 {
 		c.abort(usage)
 		return app
 	}
@@ -28,7 +28,7 @@ func (c CLI) GetConfig(args []string) types.Startable {
 	var config types.Configuration
 	envconfig.Process("ingress", &config)
 
-	command := args[0]
+	command := args[1]
 	if command == "server" {
 		app = c.initServer(config)
 	} else if command == "collector" {

@@ -13,3 +13,11 @@ type Configuration struct {
 type Startable interface {
 	Start()
 }
+
+type Service struct {
+	Name        string
+	Certificate string
+	Key         string
+	Secure      bool
+	ForceTLS    bool
+}

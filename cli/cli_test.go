@@ -10,7 +10,7 @@ import (
 
 var currentConfig types.Configuration
 var appType string
-var exitMessage string
+var success bool
 
 type fakeApp struct {
 }
@@ -19,8 +19,8 @@ func (f fakeApp) Start() {
 	return
 }
 
-func fakeAbort(msg string) {
-	exitMessage = msg
+func fakeAbort(string) {
+	success = false
 }
 
 func fakeServer(config types.Configuration) types.Startable {
@@ -41,71 +41,106 @@ var subject = CLI{
 	abort:         fakeAbort,
 }
 
-func TestServerDefaults(t *testing.T) {
-	defaultValues := types.Configuration{
-		Redis:        "localhost:6379",
-		Bind:         "0.0.0.0",
-		PollInterval: 10 * time.Second,
-	}
-
-	subject.GetConfig([]string{"server"})
-	if currentConfig != defaultValues {
-		t.Errorf("Defaults did not match: expected %+v, got %+v", defaultValues, currentConfig)
-	}
-
-	if appType != "server" {
-		t.Errorf("Expected app to be a server, got %v", appType)
-	}
-
+type cliTest struct {
+	description     string
+	environment     map[string]string
+	expectedConfig  types.Configuration
+	expectedCommand string
+	arguments       []string
+	success         bool
 }
 
-func TestCollectorDefaults(t *testing.T) {
-	defaultValues := types.Configuration{
-		Redis:        "localhost:6379",
-		Bind:         "0.0.0.0",
-		PollInterval: 10 * time.Second,
-	}
+var defaultConfig = types.Configuration{
+	Redis:        "localhost:6379",
+	Bind:         "0.0.0.0",
+	PollInterval: 10 * time.Second,
+}
 
-	subject.GetConfig([]string{"collector"})
-	if currentConfig != defaultValues {
-		t.Errorf("Defaults did not match: expected %+v, got %+v", defaultValues, currentConfig)
-	}
+var testCases = []cliTest{
+	{
+		description:     "Default server config with no environment",
+		environment:     map[string]string{},
+		expectedConfig:  defaultConfig,
+		expectedCommand: "server",
+		arguments:       []string{"anything", "server"},
+		success:         true,
+	},
+	{
+		description:     "Default collector config with no environment",
+		environment:     map[string]string{},
+		expectedConfig:  defaultConfig,
+		expectedCommand: "collector",
+		arguments:       []string{"anything", "collector"},
+		success:         true,
+	},
+	{
+		description: "Collector config with overrides",
+		environment: map[string]string{
+			"INGRESS_REDIS":         "some-redis:1234",
+			"INGRESS_BIND":          "1.2.3.4",
+			"INGRESS_POLL_INTERVAL": "10m",
+		},
+		expectedConfig: types.Configuration{
+			Redis:        "some-redis:1234",
+			Bind:         "1.2.3.4",
+			PollInterval: 10 * time.Minute,
+		},
+		expectedCommand: "collector",
+		arguments:       []string{"anything", "collector"},
+		success:         true,
+	},
+	{
+		description:     "Invalid arguments",
+		environment:     map[string]string{},
+		expectedConfig:  types.Configuration{},
+		expectedCommand: "",
+		arguments:       []string{"anything", "something"},
+		success:         false,
+	},
+	{
+		description:     "Too few arguments",
+		environment:     map[string]string{},
+		expectedConfig:  types.Configuration{},
+		expectedCommand: "",
+		arguments:       []string{"anything"},
+		success:         false,
+	},
+}
 
-	if appType != "collector" {
-		t.Errorf("Expected app to be a collector, got %v", appType)
+func setup(testCase cliTest) {
+	currentConfig = types.Configuration{}
+	appType = ""
+	success = true
+
+	for k, v := range testCase.environment {
+		os.Setenv(k, v)
 	}
 }
 
-func TestOverrides(t *testing.T) {
-	overriddenValues := types.Configuration{
-		Redis:        "some-address:1234",
-		Bind:         "1.2.3.4",
-		PollInterval: 5 * time.Minute,
-	}
-
-	os.Setenv("INGRESS_REDIS", "some-address:1234")
-	os.Setenv("INGRESS_BIND", "1.2.3.4")
-	os.Setenv("INGRESS_POLL_INTERVAL", "5m")
-
-	subject.GetConfig([]string{"server"})
-
-	if currentConfig != overriddenValues {
-		t.Errorf("Overrides did not match: expected %+v, got %+v", overriddenValues, currentConfig)
+func teardown(testCase cliTest) {
+	for k, _ := range testCase.environment {
+		os.Unsetenv(k)
 	}
 }
 
-func TestAbortingOnNoArguments(t *testing.T) {
-	subject.GetConfig([]string{})
+func TestCLI(t *testing.T) {
+	for _, testCase := range testCases {
+		setup(testCase)
 
-	if exitMessage != usage {
-		t.Error("Expected to have aborted with the usage message")
-	}
-}
+		subject.GetConfig(testCase.arguments)
 
-func TestAbortingOnInvalidArguments(t *testing.T) {
-	subject.GetConfig([]string{"something"})
+		if currentConfig != testCase.expectedConfig {
+			t.Errorf("'%s': Config did not match - expected %+v, got %+v", testCase.description, testCase.expectedConfig, currentConfig)
+		}
 
-	if exitMessage != usage {
-		t.Error("Expected to have aborted with the usage message")
+		if appType != testCase.expectedCommand {
+			t.Errorf("'%s': Expected app to be a server, got %v", testCase.description, appType)
+		}
+
+		if success != testCase.success {
+			t.Errorf("'%s': Expected app success to be %v, got %v", testCase.description, testCase.success, success)
+		}
+
+		teardown(testCase)
 	}
 }

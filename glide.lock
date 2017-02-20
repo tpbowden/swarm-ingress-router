@@ -1,5 +1,5 @@
-hash: c2fd00e934b7352083d009fedccdc4452b0aa8321b54e417a78f006eb06a263f
-updated: 2017-02-19T17:30:08.409464023Z
+hash: 45a099edc6c9bcec63c4aa18e73722c02a5f4ab752ab758f4d02939ee16f6a7a
+updated: 2017-02-20T09:34:04.012757866Z
 imports:
 - name: github.com/docker/distribution
   version: 4abae2ae560ba91db98779db2739eb97d7592fba
@@ -33,6 +33,11 @@ imports:
   - tlsconfig
 - name: github.com/docker/go-units
   version: f2d77a61e3c169b43402a0a1e84f06daf29b8190
+- name: github.com/garyburd/redigo
+  version: 8873b2f1995f59d4bcdd2b0dc9858e2cb9bf0c13
+  subpackages:
+  - internal
+  - redis
 - name: github.com/kelseyhightower/envconfig
   version: f611eb38b3875cc3bd991ca91c51d06446afa14c
 - name: github.com/Microsoft/go-winio

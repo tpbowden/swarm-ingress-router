@@ -22,9 +22,13 @@ func (s redisStore) Set(key, value string) {
 	conn := s.pool.Get()
 	defer conn.Close()
 
-	if _, err := conn.Do("SET", key, value); err != nil {
+	if _, err := conn.Do("SET", s.namespace(key), value); err != nil {
 		panic(fmt.Sprintf("Failed to store key '%s' as '%s': %v", key, value, err))
 	}
+}
+
+func (s redisStore) namespace(key string) string {
+	return fmt.Sprint("ingress:", key)
 }
 
 func NewStore(config types.Configuration) Store {
@@ -39,5 +43,5 @@ func NewStore(config types.Configuration) Store {
 			return err
 		},
 	}
-	return Store(redisStore{config: config, pool: pool})
+	return redisStore{config: config, pool: pool}
 }

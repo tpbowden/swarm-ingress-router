@@ -4,6 +4,17 @@ Route DNS names to labelled Swarm services using Docker 1.12's internal service 
 
 [![Build Status](https://travis-ci.org/tpbowden/swarm-ingress-router.svg?branch=master)](https://travis-ci.org/tpbowden/swarm-ingress-router) [![Go Report Card](https://goreportcard.com/badge/github.com/tpbowden/swarm-ingress-router)](https://goreportcard.com/report/github.com/tpbowden/swarm-ingress-router)
 
+## Rewrite coming soon
+
+As this started off as more of an experiment / learning experience, making changes to the codebase is not as easy as I'd like it to be. The v2 branch of this repo is a total rewrite of most components whilst maintaining the same core functionality, and will come with the following features:
+
+* Environment variable configuration which is easy to extend
+* Multiple DNS names per service
+* More comprehensive test suite
+* Docker 1.13 stack support
+* Allow a wildcard certificate as a fallback for HTTPS services (insead of needing a certificate and key pair per service or just sending an invalid response)
+* More complete logging to help with debugging
+
 ## Features
 
 * No external load balancer or config files needed making for easy deployments

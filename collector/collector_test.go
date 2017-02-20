@@ -1,6 +1,7 @@
 package collector
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/docker/docker/api/types/swarm"
@@ -66,11 +67,11 @@ var subject = collector{
 func TestRunningTheCollector(t *testing.T) {
 	subject.update()
 
-	if servicesForParsing[0].Spec.Annotations.Name != swarmServices[0].Spec.Annotations.Name {
+	if !reflect.DeepEqual(servicesForParsing, swarmServices) {
 		t.Error("Swarm services were not sent for parsing")
 	}
 
-	if servicesForSerialization[0] != parsedServices[0] {
+	if !reflect.DeepEqual(servicesForSerialization, parsedServices) {
 		t.Error("Parsed services were not sent for serialization")
 	}
 

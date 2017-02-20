@@ -3,6 +3,7 @@ package collector
 import (
 	"log"
 	"strconv"
+	"strings"
 
 	"github.com/docker/docker/api/types/swarm"
 
@@ -20,12 +21,14 @@ func parseServices(swarmServices []swarm.Service) []types.Service {
 		}
 
 		secure := s.Spec.Annotations.Labels["ingress.tls"] == "true"
+		dnsNames := strings.Split(s.Spec.Annotations.Labels["ingress.dnsnames"], " ")
 		forceTLS := s.Spec.Annotations.Labels["ingress.forcetls"] == "true"
 		cert := s.Spec.Annotations.Labels["ingress.cert"]
 		key := s.Spec.Annotations.Labels["ingress.key"]
 
 		result = append(result, types.Service{
 			Name:        name,
+			DNSNames:    dnsNames,
 			Port:        port,
 			Secure:      secure,
 			ForceTLS:    forceTLS,

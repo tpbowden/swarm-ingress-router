@@ -1,6 +1,7 @@
 package collector
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/docker/docker/api/types/swarm"
@@ -28,6 +29,7 @@ var parseTests = []parseTest{
 							"ingress.forcetls":   "true",
 							"ingress.cert":       "a certificate",
 							"ingress.key":        "a key",
+							"ingress.dnsnames":   "foo.bar.com bar.com",
 						},
 					},
 				},
@@ -36,6 +38,7 @@ var parseTests = []parseTest{
 		result: []types.Service{
 			{
 				Name:        "test service",
+				DNSNames:    []string{"foo.bar.com", "bar.com"},
 				Port:        100,
 				Secure:      true,
 				ForceTLS:    true,
@@ -71,7 +74,7 @@ func TestParsingServices(t *testing.T) {
 		parsedServices := parseServices(test.swarmServices)
 
 		for i, res := range parsedServices {
-			if test.result[i] != res {
+			if !reflect.DeepEqual(test.result[i], res) {
 				t.Errorf("Services did not match: expected %v, got %v", test.result[i], res)
 			}
 		}

@@ -18,6 +18,7 @@ var tests = []serializeTest{
 		services: []types.Service{
 			{
 				Name:        "something",
+				DNSNames:    []string{"something.local"},
 				Port:        100,
 				Secure:      true,
 				ForceTLS:    true,
@@ -25,7 +26,7 @@ var tests = []serializeTest{
 				Key:         "a key",
 			},
 		},
-		result: "[{\"Name\":\"something\",\"Port\":100,\"Certificate\":\"a cert\",\"Key\":\"a key\",\"Secure\":true,\"ForceTLS\":true}]",
+		result: "[{\"Name\":\"something\",\"DNSNames\":[\"something.local\"],\"Port\":100,\"Certificate\":\"a cert\",\"Key\":\"a key\",\"Secure\":true,\"ForceTLS\":true}]",
 	},
 }
 

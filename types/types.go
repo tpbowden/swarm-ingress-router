@@ -16,6 +16,7 @@ type Startable interface {
 
 type Service struct {
 	Name        string
+	DNSNames    []string
 	Port        int
 	Certificate string
 	Key         string

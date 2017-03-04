@@ -6,6 +6,7 @@ import (
 
 	"github.com/docker/docker/api/types/swarm"
 
+	"github.com/tpbowden/swarm-ingress-router/service"
 	"github.com/tpbowden/swarm-ingress-router/store"
 	"github.com/tpbowden/swarm-ingress-router/types"
 )
@@ -13,8 +14,8 @@ import (
 type collector struct {
 	config            types.Configuration
 	serviceList       func() []swarm.Service
-	parseServices     func([]swarm.Service) []types.Service
-	serializeServices func([]types.Service) string
+	parseServices     func([]swarm.Service) []service.Service
+	serializeServices func([]service.Service) string
 	store             store.Store
 }
 
@@ -48,7 +49,7 @@ func NewCollector(config types.Configuration) types.Startable {
 		config:            config,
 		serviceList:       newDockerClient().serviceList,
 		parseServices:     parseServices,
-		serializeServices: serializeServices,
+		serializeServices: service.Serialize,
 		store:             store.NewStore(config),
 	}
 }

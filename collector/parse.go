@@ -7,11 +7,11 @@ import (
 
 	"github.com/docker/docker/api/types/swarm"
 
-	"github.com/tpbowden/swarm-ingress-router/types"
+	"github.com/tpbowden/swarm-ingress-router/service"
 )
 
-func parseServices(swarmServices []swarm.Service) []types.Service {
-	result := []types.Service{}
+func parseServices(swarmServices []swarm.Service) []service.Service {
+	result := []service.Service{}
 	for _, s := range swarmServices {
 		name := s.Spec.Annotations.Name
 		port, err := strconv.Atoi(s.Spec.Annotations.Labels["ingress.targetport"])
@@ -26,7 +26,7 @@ func parseServices(swarmServices []swarm.Service) []types.Service {
 		cert := s.Spec.Annotations.Labels["ingress.cert"]
 		key := s.Spec.Annotations.Labels["ingress.key"]
 
-		result = append(result, types.Service{
+		result = append(result, service.Service{
 			Name:        name,
 			DNSNames:    dnsNames,
 			Port:        port,

@@ -1,21 +1,20 @@
-package collector
+package service
 
 import (
+	"reflect"
 	"testing"
-
-	"github.com/tpbowden/swarm-ingress-router/types"
 )
 
 type serializeTest struct {
 	description string
-	services    []types.Service
+	services    []Service
 	result      string
 }
 
 var tests = []serializeTest{
 	{
 		description: "Serializing a service",
-		services: []types.Service{
+		services: []Service{
 			{
 				Name:        "something",
 				DNSNames:    []string{"something.local"},
@@ -32,10 +31,16 @@ var tests = []serializeTest{
 
 func TestSerializingServices(t *testing.T) {
 	for _, test := range tests {
-		result := serializeServices(test.services)
+		result := Serialize(test.services)
 
 		if result != test.result {
 			t.Errorf("Result does not match: expected %v, got %v", test.result, result)
+		}
+
+		deserialized := Deserialize(result)
+
+		if !reflect.DeepEqual(deserialized, test.services) {
+			t.Errorf("Failed to deserialize services: expected %v, got %v", test.services, deserialized)
 		}
 	}
 }

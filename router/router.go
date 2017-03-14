@@ -16,7 +16,7 @@ type Router struct {
 }
 
 // RouteToService returns the correct HTTP handler for a given service's DNS name
-func (r *Router) RouteToService(address string, secure bool) (fasthttp.RequestHandler, bool) {
+func (r *Router) RouteToService(address string, path string, secure bool) (fasthttp.RequestHandler, bool) {
 	var handler fasthttp.RequestHandler
 
 	route, ok := r.routes[address]
@@ -33,7 +33,7 @@ func (r *Router) RouteToService(address string, secure bool) (fasthttp.RequestHa
 		return NewProxyHandler(route.URL), true
 	}
 
-	redirectAddress := fmt.Sprintf("https://%s", address)
+	redirectAddress := fmt.Sprintf("https://%s%s", address, path)
 	return NewRedirectHandler(redirectAddress, 301), true
 }
 

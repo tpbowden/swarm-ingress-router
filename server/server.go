@@ -51,7 +51,7 @@ func (s *Server) ServeHTTP(ctx *fasthttp.RequestCtx) {
 	dnsName := strings.Split(string(ctx.Host()), ":")[0]
 	log.Printf("Started %s \"%s\" for %s using host %s", ctx.Method(), ctx.Path(), ctx.RemoteAddr(), dnsName)
 
-	handler, ok := s.router.RouteToService(dnsName, ctx.IsTLS())
+	handler, ok := s.router.RouteToService(dnsName, ctx.Path(), ctx.IsTLS())
 	if !ok {
 		ctx.SetStatusCode(fasthttp.StatusNotFound)
 		ctx.Write([]byte("Failed to look up service"))

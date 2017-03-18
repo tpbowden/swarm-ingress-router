@@ -14,6 +14,7 @@ type RouterTest struct {
 	description string
 	services    []service.Service
 	host        string
+	path        string
 	secure      bool
 	success     bool
 	redirect    bool
@@ -58,6 +59,7 @@ var routerTests = []RouterTest{
 		host:        "example.local",
 		success:     true,
 		redirect:    true,
+		path:        "/",
 		services: []service.Service{
 			{
 				URL:      "http://my-service:3000",
@@ -73,7 +75,7 @@ func TestRouting(t *testing.T) {
 		subject := NewRouter()
 		subject.UpdateTable(test.services)
 
-		_, ok := subject.RouteToService(test.host, test.secure)
+		_, ok := subject.RouteToService(test.host, string(test.path), test.secure)
 
 		if ok != test.success {
 			t.Errorf("Test failed: service fetching did not match: %s", test.description)

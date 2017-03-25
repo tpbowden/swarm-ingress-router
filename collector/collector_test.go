@@ -6,6 +6,7 @@ import (
 
 	"github.com/docker/docker/api/types/swarm"
 
+	"github.com/tpbowden/swarm-ingress-router/service"
 	"github.com/tpbowden/swarm-ingress-router/store"
 	"github.com/tpbowden/swarm-ingress-router/types"
 )
@@ -24,7 +25,7 @@ var swarmServices = []swarm.Service{
 	},
 }
 
-var parsedServices = []types.Service{
+var parsedServices = []service.Service{
 	{
 		Name: "some service",
 	},
@@ -33,7 +34,7 @@ var parsedServices = []types.Service{
 var serializedServices = "some parsed services"
 
 var servicesForParsing []swarm.Service
-var servicesForSerialization []types.Service
+var servicesForSerialization []service.Service
 
 type fakeStore struct {
 }
@@ -46,12 +47,12 @@ func fakeServiceList() []swarm.Service {
 	return swarmServices
 }
 
-func fakeParser(services []swarm.Service) []types.Service {
+func fakeParser(services []swarm.Service) []service.Service {
 	servicesForParsing = services
 	return parsedServices
 }
 
-func fakeSerializer(services []types.Service) string {
+func fakeSerializer(services []service.Service) string {
 	servicesForSerialization = services
 	return serializedServices
 }

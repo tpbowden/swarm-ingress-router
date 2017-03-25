@@ -11,6 +11,7 @@ import (
 
 type server struct {
 	config types.Configuration
+	router *router
 }
 
 func startServer(s http.Server) {
@@ -52,6 +53,7 @@ func (s server) Start() {
 		},
 	}
 
+	go s.router.subscribe()
 	go startServer(httpServer)
 	go startTLSServer(tlsServer)
 
@@ -59,5 +61,8 @@ func (s server) Start() {
 }
 
 func NewServer(config types.Configuration) types.Startable {
-	return server{config: config}
+	return server{
+		config: config,
+		router: newRouter(),
+	}
 }

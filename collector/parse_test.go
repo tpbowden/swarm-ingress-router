@@ -6,13 +6,13 @@ import (
 
 	"github.com/docker/docker/api/types/swarm"
 
-	"github.com/tpbowden/swarm-ingress-router/types"
+	"github.com/tpbowden/swarm-ingress-router/service"
 )
 
 type parseTest struct {
 	description   string
 	swarmServices []swarm.Service
-	result        []types.Service
+	result        []service.Service
 }
 
 var parseTests = []parseTest{
@@ -35,7 +35,7 @@ var parseTests = []parseTest{
 				},
 			},
 		},
-		result: []types.Service{
+		result: []service.Service{
 			{
 				Name:        "test service",
 				DNSNames:    []string{"foo.bar.com", "bar.com"},
@@ -65,7 +65,7 @@ var parseTests = []parseTest{
 				},
 			},
 		},
-		result: []types.Service{},
+		result: []service.Service{},
 	},
 }
 

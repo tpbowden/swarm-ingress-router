@@ -49,10 +49,10 @@ dev: dev-compile
 	@docker network create --driver=overlay router-management
 	@docker service create --name router-storage --network router-management redis:3.2-alpine
 	@docker service create --name router-backend --constraint node.role==manager --mount \
-		target=/var/run/docker.sock,source=/var/run/docker.sock,type=bind --network router-management \
+		target=/var/run/docker.sock,source=/var/run/docker.sock,type=bind,readonly --network router-management \
 		swarm-ingress-router-dev:latest -r router-storage:6379 collector
 	@docker service create --name router -p 80:8080 -p 443:8443 --network frontends \
-		--network router-management swarm-ingress-router-dev:latest -r \
+		--network router-management --user nobody swarm-ingress-router-dev:latest -r \
 		router-storage:6379 server -b 0.0.0.0
 	@docker service create --name frontend --label ingress=true --label ingress.dnsname=example.local \
 		--label ingress.targetport=80 --network frontends --label ingress.tls=true --label \

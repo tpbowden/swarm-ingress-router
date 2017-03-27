@@ -41,14 +41,14 @@ Then you have to start the router's backend on management network. The service m
 run only on master nodes (as it has to query for services).
 
     docker service create --name router-backend --constraint node.role==manager --mount \
-      target=/var/run/docker.sock,source=/var/run/docker.sock,type=bind --network router-management \
+      target=/var/run/docker.sock,source=/var/run/docker.sock,type=bind,readonly --network router-management \
       tpbowden/swarm-ingress-router:latest -r router-storage:6379 collector
 
 Now you can start the router's frontend on both the management and frontend network.
 It must listen on the standard HTTP/HTTPS ports 
 
     docker service create --name router --mode global -p 80:8080 -p 443:8443 --network frontends \
-      --network router-management tpbowden/swarm-ingress-router:latest -r \
+      --network router-management --user nobody tpbowden/swarm-ingress-router:latest -r \
       router-storage:6379 server -b 0.0.0.0
 
 ### Start a demo app

@@ -90,6 +90,19 @@ type CertificateTest struct {
 	success     bool
 }
 
+var wildcardCertTest = 	CertificateTest{
+	description: "Wildcard cert default returns successfully",
+	services: []service.Service{
+		{
+			URL:     "http://my-service:3000",
+			DNSName: "example.local",
+			Secure:  true,
+		},
+	},
+	host:    "example.local",
+	success: true,
+}
+
 var certificateTests = []CertificateTest{
 	{
 		description: "Missing services do not return successfully",
@@ -133,11 +146,21 @@ func TestCertificates(t *testing.T) {
 		subject := NewRouter()
 		subject.UpdateTable(test.services)
 
-		_, ok := subject.CertificateForService(test.host)
+		_, ok := subject.CertificateForService(test.host, "", "")
 
 		if ok != test.success {
 			t.Errorf("Test failed: certificate fetching did not match: %s", test.description)
 		}
 
 	}
+
+  // Test for defaulted wildcard cert
+  subject := NewRouter()
+  subject.UpdateTable(wildcardCertTest.services)
+
+  _, ok := subject.CertificateForService(wildcardCertTest.host, string(certificate), string(key))
+
+  if ok != wildcardCertTest.success {
+    t.Errorf("Test failed: default certificate fetching did not match: %s", wildcardCertTest.description)
+  }
 }

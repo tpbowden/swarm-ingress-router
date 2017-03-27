@@ -24,6 +24,8 @@ type Server struct {
   readBufferSize int
 	cache       cache.Cache
 	router      *router.Router
+  cert        string
+  key         string
 }
 
 func (s *Server) syncServices() {
@@ -62,7 +64,7 @@ func (s *Server) ServeHTTP(ctx *fasthttp.RequestCtx) {
 }
 
 func (s *Server) getCertificate(clientHello *tls.ClientHelloInfo) (*tls.Certificate, error) {
-	cert, ok := s.router.CertificateForService(clientHello.ServerName)
+	cert, ok := s.router.CertificateForService(clientHello.ServerName, s.cert, s.key)
 	if !ok {
 		return cert, errors.New("Failed to lookup certificate")
 	}
@@ -104,8 +106,8 @@ func (s *Server) Start() {
 }
 
 // NewServer returns a new instrance of the server
-func NewServer(bind, redis string, maxBodySize int, readBufferSize int) types.Startable {
+func NewServer(bind, redis, cert, key string, maxBodySize, readBufferSize int) types.Startable {
 	router := router.NewRouter()
 	cache := cache.NewCache(redis)
-	return types.Startable(&Server{bindAddress: bind, maxBodySize: maxBodySize, readBufferSize: readBufferSize, router: router, cache: cache})
+	return types.Startable(&Server{bindAddress: bind, maxBodySize: maxBodySize, readBufferSize: readBufferSize, router: router, cache: cache, cert: cert, key: key})
 }

@@ -17,6 +17,8 @@ type TestServer struct {
 	maxBodySize int
   readBufferSize int
 	started     bool
+  cert        string
+  key         string
 }
 
 func (s *TestServer) Start() {
@@ -33,9 +35,11 @@ func (c *TestCollector) Start() {
 	c.started = true
 }
 
-func newTestServer(bind, redis string, maxBodySize int, readBufferSize int) types.Startable {
+func newTestServer(bind, redis, cert, key string, maxBodySize int, readBufferSize int) types.Startable {
 	fakeServer.bindAddress = bind
 	fakeServer.redis = redis
+  fakeServer.cert = cert
+  fakeServer.key = key
 	fakeServer.maxBodySize = maxBodySize
   fakeServer.readBufferSize = readBufferSize
 	fakeServer.started = false
@@ -50,7 +54,7 @@ func newTestCollector(interval int, redis string) types.Startable {
 }
 
 func TestStartingTheServerWithCLI(t *testing.T) {
-	args := []string{"cli", "-r", "redis-url", "server", "-b", "1.2.3.4", "--max-body-size", "412", "--read-buffer-size", "206"}
+	args := []string{"cli", "-r", "redis-url", "server", "-c", "wildcard_cert", "-k", "wildcard_cert_key", "-b", "1.2.3.4", "--max-body-size", "412", "--read-buffer-size", "206"}
 	subject := CLI{newServer: newTestServer, newCollector: newTestCollector}
 	subject.Start(args)
 
@@ -65,6 +69,18 @@ func TestStartingTheServerWithCLI(t *testing.T) {
 	if expectedRedis != actualRedis {
 		t.Errorf("Expected redis URL to equal %s, got %s", expectedRedis, actualRedis)
 	}
+
+  expectedCert := "wildcard_cert"
+  actualCert := fakeServer.cert
+  if expectedCert != actualCert {
+    t.Errorf("Expected cert to equal %s, got %s", expectedCert, actualCert)
+  }
+
+  expectedKey := "wildcard_cert_key"
+  actualKey := fakeServer.key
+  if expectedKey != actualKey {
+    t.Errorf("Expected key to equal %s, got %s", expectedKey, actualKey)
+  }
 
 	expectedMaxBodySize := 412 * 1024 * 1024
 	actualMaxBodySize := fakeServer.maxBodySize

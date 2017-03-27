@@ -10,7 +10,7 @@ import (
 )
 
 type CLI struct {
-	newServer    func(string, string, int, int) types.Startable
+	newServer    func(string, string, string, string, int, int) types.Startable
 	newCollector func(int, string) types.Startable
 }
 
@@ -44,6 +44,16 @@ func (c *CLI) Start(args []string) {
 					Value: "127.0.0.1",
 					Usage: "Bind to `address`",
 				},
+        cli.StringFlag{
+          Name:  "cert, c",
+          Value: "",
+          Usage: "Global wildcard certificate for services.",
+        },
+        cli.StringFlag{
+          Name:  "key, k",
+          Value: "",
+          Usage: "Global key for wildcard cert.",
+        },
 				cli.IntFlag{
 					Name:  "max-body-size",
 					Value: 4,
@@ -64,7 +74,7 @@ func (c *CLI) Start(args []string) {
         // Increase this buffer if your clients send multi-KB RequestURIs
         // and/or multi-KB headers (for example, BIG cookies, things like kerberos
         // and others which use larger sizes than 4KB)
-				server := c.newServer(ctx.String("bind"), ctx.GlobalString("redis"), ctx.Int("max-body-size")*1024*1024, ctx.Int("read-buffer-size")*1024)
+				server := c.newServer(ctx.String("bind"), ctx.GlobalString("redis"), ctx.String("cert"), ctx.String("key"), ctx.Int("max-body-size")*1024*1024, ctx.Int("read-buffer-size")*1024)
 				server.Start()
 				return nil
 			},

@@ -30,6 +30,7 @@ func (s *Service) ParseCertificate() bool {
 
 	parsedCert, err := tls.X509KeyPair([]byte(s.EncodedCert), []byte(s.EncodedKey))
 	if err != nil {
+		log.Printf(err.Error())
 		log.Printf("Failed to parse certificate for %s", s.DNSName)
 		return false
 	}

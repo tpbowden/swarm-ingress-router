@@ -1,27 +1,22 @@
 # Swarm ingress router
 
+## This package is not maintained. Do not attempt to use in production
+
+Try https://github.com/containous/traefik for all your reverse proxy needs
+
+---
+
 Route DNS names to labelled Swarm services using Docker 1.12's internal service load balancing
 
 [![Build Status](https://travis-ci.org/tpbowden/swarm-ingress-router.svg?branch=master)](https://travis-ci.org/tpbowden/swarm-ingress-router) [![Go Report Card](https://goreportcard.com/badge/github.com/tpbowden/swarm-ingress-router)](https://goreportcard.com/report/github.com/tpbowden/swarm-ingress-router)
 
-## Rewrite coming soon
-
-As this started off as more of an experiment / learning experience, making changes to the codebase is not as easy as I'd like it to be. The v2 branch of this repo is a total rewrite of most components whilst maintaining the same core functionality, and will come with the following features:
-
-* Environment variable configuration which is easy to extend
-* Multiple DNS names per service
-* More comprehensive test suite
-* Docker 1.13 stack support
-* Allow a wildcard certificate as a fallback for HTTPS services (insead of needing a certificate and key pair per service or just sending an invalid response)
-* More complete logging to help with debugging
-
 ## Features
 
-* No external load balancer or config files needed making for easy deployments
-* Integrated TLS decryption for services which provide a certificate and key
-* Automatic service discovery and load balancing handled by Docker
-* Scaled and maintained by the Swarm for high resilience and performance
-* Incredibly lightweight image (less than 20MB after decompression)
+- No external load balancer or config files needed making for easy deployments
+- Integrated TLS decryption for services which provide a certificate and key
+- Automatic service discovery and load balancing handled by Docker
+- Scaled and maintained by the Swarm for high resilience and performance
+- Incredibly lightweight image (less than 20MB after decompression)
 
 ## Installation
 
@@ -45,7 +40,7 @@ run only on master nodes (as it has to query for services).
       tpbowden/swarm-ingress-router:latest -r router-storage:6379 collector
 
 Now you can start the router's frontend on both the management and frontend network.
-It must listen on the standard HTTP/HTTPS ports 
+It must listen on the standard HTTP/HTTPS ports
 
     docker service create --name router --mode global -p 80:8080 -p 443:8443 --network frontends \
       --network router-management tpbowden/swarm-ingress-router:latest -r \
@@ -67,27 +62,27 @@ routed to the service.
 
 In order for the router to pick up a service, the service must have the following labels:
 
-* `ingress=true`
-* `ingress.dnsname=<your service's external DNS name>`
-* `ingress.targetport=<your service's externally-facing port>`
+- `ingress=true`
+- `ingress.dnsname=<your service's external DNS name>`
+- `ingress.targetport=<your service's externally-facing port>`
 
 For TLS you need the following lables:
 
-* `ingress.tls=true`
-* `ingress.cert="$(cat <your crt file>)"`
-* `ingress.key="$(cat <your key file>"`
+- `ingress.tls=true`
+- `ingress.cert="$(cat <your crt file>)"`
+- `ingress.key="$(cat <your key file>"`
 
 To force services to force TLS you can also use the following label:
 
-* `ingress.forcetls=true`
+- `ingress.forcetls=true`
 
 You do not need to publish the service's port as a node port as long as it is exposed internally and on the same network
 as the router.
 
 ## Todo
 
-* Better logging
-* Command line argument for log level
-* Use Docker events to stay in sync and long polling as a fallback
-* Create a docker-compose file which can be converted into a stack
-* Add a heathcheck endpoint and use Docker's HEALTHCHECK instruction to ensure maximum uptime
+- Better logging
+- Command line argument for log level
+- Use Docker events to stay in sync and long polling as a fallback
+- Create a docker-compose file which can be converted into a stack
+- Add a heathcheck endpoint and use Docker's HEALTHCHECK instruction to ensure maximum uptime
